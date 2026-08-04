@@ -1,7 +1,7 @@
 export type Lang = 'en' | 'es';
 
 const en = {
-  'meta.title': 'Kevin López — Full-stack & mobile developer', // KEVIN-TODO nombre real
+  'meta.title': 'Kevin David Lopez Verdin — Full-stack & mobile developer',
   'meta.description': 'Full-stack developer building web and mobile apps, member of The Dev Nest.',
   'nav.about': 'about',
   'nav.stack': 'stack',
@@ -14,7 +14,7 @@ const en = {
   'hero.h1.mobile': 'mobile apps',
   'hero.h1.post': 'that feel',
   'hero.h1.alive': 'alive.',
-  'hero.intro.pre': "I'm Kevin, full-stack developer and member of", // KEVIN-TODO
+  'hero.intro.pre': "I'm Kevin, full-stack developer and member of",
   'hero.intro.post': 'From the database to the last pixel: I obsess over details (spacing, timing, feedback).',
   'hero.cta.talk': "Let's talk",
   'hero.cta.work': 'See my work',
@@ -50,7 +50,7 @@ const en = {
 export type UIKey = keyof typeof en;
 
 const es: Record<UIKey, string> = {
-  'meta.title': 'Kevin López — Desarrollador full-stack y móvil', // KEVIN-TODO nombre real
+  'meta.title': 'Kevin David Lopez Verdin — Desarrollador full-stack y móvil',
   'meta.description': 'Desarrollador full-stack de apps web y móviles, miembro de The Dev Nest.',
   'nav.about': 'sobre mí',
   'nav.stack': 'stack',
@@ -63,7 +63,7 @@ const es: Record<UIKey, string> = {
   'hero.h1.mobile': 'móviles',
   'hero.h1.post': 'que se sienten',
   'hero.h1.alive': 'vivas.',
-  'hero.intro.pre': 'Soy Kevin, desarrollador full-stack y miembro de', // KEVIN-TODO
+  'hero.intro.pre': 'Soy Kevin, desarrollador full-stack y miembro de',
   'hero.intro.post': 'De la base de datos al último pixel: me obsesionan los detalles (espaciado, timing, feedback).',
   'hero.cta.talk': 'Hablemos',
   'hero.cta.work': 'Ver mi trabajo',

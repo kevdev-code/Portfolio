@@ -4,8 +4,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  // KEVIN-TODO: dominio real al hacer deploy
-  site: 'https://portfolio-kevin.vercel.app',
+  site: 'https://kevindlv.com',
 
   i18n: {
     defaultLocale: 'en',
