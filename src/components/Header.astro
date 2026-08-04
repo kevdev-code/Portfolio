@@ -7,7 +7,7 @@ const otherLang: Lang = lang === 'en' ? 'es' : 'en';
 ---
 <header>
   <div class="wrap header-in">
-    <a class="logo" href={localizePath(lang)}>kevindlv</a>
+    <a class="logo" href={localizePath(lang)} data-egg-msg={t('egg.msg')}>kevindlv</a>
     <nav>
       <a href="#about">{t('nav.about')}</a>
       <a href="#skills">{t('nav.stack')}</a>
@@ -44,8 +44,100 @@ const otherLang: Lang = lang === 'en' ? 'es' : 'en';
     nav > a:not(.lang) { display: none; }
   }
 </style>
+<style is:global>
+  /* party mode: elements below are created dynamically by Header's script,
+     so they never receive Astro's scoped data-attribute — this block must
+     stay global (see Task 6 lesson: scoped styles don't reach JS-created nodes). */
+  .party { position: fixed; inset: 0; z-index: 55; pointer-events: none; }
+  .party-pill {
+    position: fixed; top: 0; left: var(--x);
+    padding: 0.25rem 0.65rem; border-radius: 99px; font-weight: 700;
+    font-family: "Bricolage Grotesque", sans-serif; white-space: nowrap;
+    animation: party-fall var(--d) linear var(--delay, 0s) forwards;
+  }
+  .party-pill.pill-mint   { background: var(--mint); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); }
+  .party-pill.pill-butter { background: var(--butter); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.45 0.06 95); }
+  .party-pill.pill-coral  { background: var(--coral); color: #fff; box-shadow: 3px 3px 0 oklch(0.35 0.1 45); }
+  @keyframes party-fall {
+    from { transform: translateY(-10vh) rotate(var(--r)); }
+    to   { transform: translateY(110vh) rotate(calc(var(--r) + 40deg)); }
+  }
+  .egg-msg {
+    position: fixed; top: 50%; left: 50%;
+    translate: -50% -50%; rotate: -2deg;
+    background: var(--butter); color: var(--bg);
+    font-weight: 800; font-size: clamp(1.05rem, 3vw, 1.5rem);
+    padding: 1rem 1.8rem; border-radius: 14px; text-align: center;
+    box-shadow: 6px 6px 0 oklch(0.45 0.06 95);
+    animation: sticker-in 0.4s var(--ease-pop) forwards;
+  }
+</style>
 <script>
   // el toggle conserva la sección visible: anexa el hash actual al href
   const sw = document.querySelector('[data-lang-switch]') as HTMLAnchorElement | null;
   if (sw) sw.addEventListener('click', () => { if (location.hash) sw.href = sw.href.split('#')[0] + location.hash; });
+
+  // easter egg: 3 quick clicks on the logo -> party mode (sticker rain + message)
+  const PARTY_TEXTS = ['React', 'TypeScript', 'Astro', 'Flutter', 'Stripe', 'WhatsApp', 'PostgreSQL', 'kevindlv', '🌱', '📱', '🪺', '✦', '🎉'];
+  const PARTY_COLORS = ['mint', 'butter', 'coral'];
+  const CLICK_WINDOW_MS = 1200;
+  const PILL_COUNT = 28;
+  let clickTimes: number[] = [];
+  let partyRunning = false;
+
+  function spawnParty(message: string) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const container = document.createElement('div');
+    container.className = 'party';
+    container.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(container);
+
+    let longest = 0;
+    if (!reduced) {
+      for (let i = 0; i < PILL_COUNT; i++) {
+        const duration = 1.8 + Math.random() * 1.4; // 1.8s - 3.2s
+        const delay = Math.random() * 0.4;
+        const pill = document.createElement('span');
+        pill.className = `party-pill pill-${PARTY_COLORS[i % PARTY_COLORS.length]}`;
+        pill.textContent = PARTY_TEXTS[Math.floor(Math.random() * PARTY_TEXTS.length)];
+        pill.style.setProperty('--x', `${Math.random() * 100}vw`);
+        pill.style.setProperty('--r', `${-12 + Math.random() * 24}deg`);
+        pill.style.setProperty('--d', `${duration}s`);
+        pill.style.setProperty('--delay', `${delay}s`);
+        pill.style.fontSize = `${0.8 + Math.random() * 0.4}rem`;
+        pill.addEventListener('animationend', () => pill.remove());
+        container.appendChild(pill);
+        longest = Math.max(longest, duration + delay);
+      }
+    }
+
+    const msgEl = document.createElement('div');
+    msgEl.className = 'egg-msg';
+    msgEl.textContent = message;
+    container.appendChild(msgEl);
+    setTimeout(() => msgEl.remove(), 2800);
+
+    const cleanupMs = reduced ? 3000 : longest * 1000 + 400;
+    setTimeout(() => {
+      container.remove();
+      partyRunning = false;
+    }, cleanupMs);
+  }
+
+  const logo = document.querySelector('.logo') as HTMLAnchorElement | null;
+  if (logo) {
+    logo.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (partyRunning) return;
+      const now = Date.now();
+      clickTimes = clickTimes.filter((t) => now - t < CLICK_WINDOW_MS);
+      clickTimes.push(now);
+      if (clickTimes.length >= 3) {
+        clickTimes = [];
+        partyRunning = true;
+        spawnParty(logo.dataset.eggMsg || '');
+      }
+    });
+  }
 </script>

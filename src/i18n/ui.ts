@@ -56,6 +56,7 @@ const en = {
   'e404.joke': "This page returned 404. Unlike me, it doesn't answer fast.",
   'e404.back': 'Back home',
   'marquee.items': 'web|mobile|frontend|backend|apis|ui that feels right',
+  'egg.msg': 'You found party mode! 🎉',
 } as const;
 
 export type UIKey = keyof typeof en;
@@ -116,6 +117,7 @@ const es: Record<UIKey, string> = {
   'e404.joke': 'Esta página devolvió 404. A diferencia de mí, no responde rápido.',
   'e404.back': 'Volver al inicio',
   'marquee.items': 'web|móvil|frontend|backend|apis|ui que se siente bien',
+  'egg.msg': '¡Encontraste el modo fiesta! 🎉',
 };
 
 export const ui: Record<Lang, Record<UIKey, string>> = { en, es };
