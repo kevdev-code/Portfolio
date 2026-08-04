@@ -1,0 +1,40 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const steps = [1, 2, 3, 4] as const;
+---
+<section class="process reveal" id="process">
+  <div class="sec-head"><h2>{t('process.title')}</h2><span class="meta">{t('process.meta')}</span></div>
+  <ol class="steps">
+    {steps.map((n) => (
+      <li class="step">
+        <span class="num">{n}</span>
+        <h3>{t(`process.${n}.t`)}</h3>
+        <p>{t(`process.${n}.d`)}</p>
+      </li>
+    ))}
+  </ol>
+</section>
+<style>
+  .steps { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.4rem; max-width: 1000px; }
+  .step { display: flex; flex-direction: column; gap: 0.5rem; }
+  .num {
+    width: 2.4rem; height: 2.4rem; display: grid; place-items: center;
+    font-weight: 800; font-size: 1.1rem; border-radius: 12px;
+    transform: rotate(-3deg);
+  }
+  .step:nth-child(1) .num { background: var(--mint); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); }
+  .step:nth-child(2) .num { background: var(--butter); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.45 0.06 95); transform: rotate(2deg); }
+  .step:nth-child(3) .num { background: var(--coral); color: #fff; box-shadow: 3px 3px 0 oklch(0.35 0.1 45); transform: rotate(-2deg); }
+  .step:nth-child(4) .num { background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); transform: rotate(3deg); }
+  .step h3 { font-size: 1.1rem; font-weight: 700; }
+  .step p { color: var(--muted); font-size: 0.95rem; max-width: 34ch; }
+  :global(.js .reveal .step) { opacity: 0; transform: translateY(20px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+  :global(.js .reveal .step:nth-child(1)) { transition-delay: 0.1s; }
+  :global(.js .reveal .step:nth-child(2)) { transition-delay: 0.22s; }
+  :global(.js .reveal .step:nth-child(3)) { transition-delay: 0.34s; }
+  :global(.js .reveal .step:nth-child(4)) { transition-delay: 0.46s; }
+  :global(.js .reveal.in .step) { opacity: 1; transform: none; }
+</style>

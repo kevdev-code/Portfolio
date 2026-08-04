@@ -79,6 +79,7 @@ section { padding: clamp(3.5rem, 9vh, 6.5rem) 0; border-top: 1px solid var(--bor
   .js .reveal .proj-info,
   .js .reveal .proj-shot,
   .js .reveal .xp-row,
+  .js .reveal .step,
   .js .reveal .socials a,
   .js .reveal .about-photo,
   .js .reveal .about-grid p { opacity: 1 !important; transform: none !important; }
