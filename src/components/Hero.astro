@@ -102,19 +102,19 @@ const t = useTranslations(lang);
     };
     setTimeout(() => requestAnimationFrame(tick), delay);
   }
-  function startScramble() {
+  // fonts-dependent prep, run ONCE: pin the headline's box + each word's width (so
+  // settling glyph metrics can't shift layout), then flip every word to glyphs synchronously
+  // (no flash of final text). Split out so it can run under the intro veil, before landing.
+  let prepped = false;
+  function prepWords() {
+    if (prepped || reducedS) return;
+    prepped = true;
     const words = [...document.querySelectorAll<HTMLElement>('#headline .word')];
-    if (reducedS) return; // headline already fully visible, leave it
     // belt-and-suspenders vertical lock: pin the headline's own box so settling
     // glyph widths/heights (font now ready) can't nudge content below it
     const h1 = document.getElementById('headline') as HTMLElement;
     const hHeight = h1.getBoundingClientRect().height;
     h1.style.minHeight = hHeight + 'px';
-    let wordsRemaining = words.length;
-    const onWordDone = () => {
-      wordsRemaining--;
-      if (wordsRemaining <= 0) h1.style.minHeight = '';
-    };
     words.forEach((w) => {
       // reserve final width to avoid layout shift while scrambling (proportional font);
       // fixed width (not just min-width) so wide fallback glyphs can't widen the word mid-scramble
@@ -125,6 +125,17 @@ const t = useTranslations(lang);
       // synchronous first pass: whole headline shows glyphs instantly, no flash of real text
       w.textContent = finalText.split('').map((c) => (c === ' ' ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])).join('');
     });
+  }
+  function startScramble() {
+    if (reducedS) return; // headline already fully visible, leave it
+    prepWords(); // no-op if already prepped under the veil
+    const words = [...document.querySelectorAll<HTMLElement>('#headline .word')];
+    const h1 = document.getElementById('headline') as HTMLElement;
+    let wordsRemaining = words.length;
+    const onWordDone = () => {
+      wordsRemaining--;
+      if (wordsRemaining <= 0) h1.style.minHeight = '';
+    };
     words.forEach((w, i) => scrambleWord(w, i * 140, onWordDone));
   }
   // gate on webfont readiness: measuring/pinning widths before Bricolage finishes loading
@@ -136,6 +147,15 @@ const t = useTranslations(lang);
   else new MutationObserver((_, obs) => {
     if (document.documentElement.classList.contains('ready')) { obs.disconnect(); begin(); }
   }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+  // under the intro veil: prep (measure/pin/glyph-ify) as soon as fonts are ready, so the
+  // curtain lifts onto glyphs instead of the final text — decoding then starts at landing.
+  // not-ready guard avoids double-prep racing a fast skip that already reached startScramble.
+  if (document.documentElement.classList.contains('intro-play')) {
+    document.fonts.ready.then(() => {
+      if (!document.documentElement.classList.contains('ready')) prepWords();
+    });
+  }
 
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     // parallax de stickers del hero
