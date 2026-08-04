@@ -1,4 +1,4 @@
-import sharp from 'sharp';
+import sharp from "sharp";
 
 const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
@@ -12,5 +12,5 @@ const svg = `
 </svg>`;
 // NOTE: oklch() colors caused sharp/librsvg to render solid black; converted to hex equivalents (see task-11 brief) for this build-time script only. public/favicon.svg keeps oklch() since browsers render it fine.
 
-await sharp(Buffer.from(svg)).png().toFile('public/og.png');
-console.log('public/og.png generado');
+await sharp(Buffer.from(svg)).png().toFile("public/og.png");
+console.log("public/og.png generado");

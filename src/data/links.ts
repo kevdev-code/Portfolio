@@ -1,7 +1,6 @@
-// KEVIN-TODO: links reales del autor
 export const links = {
-  email: 'hola@example.com',
-  github: 'https://github.com/example',
-  linkedin: 'https://linkedin.com/in/example',
-  whatsapp: 'https://wa.me/5210000000000',
+  email: 'kevin.dlv@thedevnest.com',
+  github: 'https://github.com/kevdev-code',
+  linkedin: 'https://www.linkedin.com/in/kevin-david-lopez-verdin-a65819263/',
+  whatsapp: 'https://wa.me/526861550212',
 } as const;
