@@ -4,6 +4,7 @@ export const skills: Record<'web' | 'backend' | 'mobile' | 'services', Skill[]> 
   web: [
     { name: 'React', icon: 'simple-icons:react' },
     { name: 'Next.js', icon: 'simple-icons:nextdotjs' },
+    { name: 'Astro', icon: 'simple-icons:astro' },
     { name: 'TypeScript', icon: 'simple-icons:typescript' },
     { name: 'Vite', icon: 'simple-icons:vite' },
   ],
