@@ -17,7 +17,7 @@ export const experience = [
     when: '2024 – hoy',
     role_en: 'Developer', role_es: 'Developer',
     org: '@ Indaba Solutions',
-    desc_en: 'Software development for company clients and products.', // KEVIN-TODO: afinar rol y descripción reales
-    desc_es: 'Desarrollo de software para clientes y productos de la empresa.', // KEVIN-TODO: afinar rol y descripción reales
+    desc_en: 'Software development for company clients and products.',
+    desc_es: 'Desarrollo de software para clientes y productos de la empresa.',
   },
 ] as const;

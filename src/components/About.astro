@@ -1,15 +1,33 @@
 ---
+import { Image } from 'astro:assets';
 import { useTranslations, type Lang } from '../i18n/ui';
+import yo from '../assets/yo.jpeg';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 <section class="about reveal" id="about">
   <div class="sec-head"><h2>{t('about.title')}</h2><span class="meta">{t('about.meta')}</span></div>
-  <p><strong>{t('about.body.strong')}</strong> {t('about.body.rest')} <strong>{t('about.body.strong2')}</strong>.</p>
+  <div class="about-grid">
+    <Image class="about-photo" src={yo} alt="Kevin David Lopez Verdin" width={480} />
+    <p><strong>{t('about.body.strong')}</strong> {t('about.body.rest')} <strong>{t('about.body.strong2')}</strong>.</p>
+  </div>
 </section>
 <style>
   section.about { border-top: 0; }
+  .about-grid { display: grid; grid-template-columns: 230px 1fr; gap: 2.2rem; align-items: start; }
+  .about-photo {
+    width: 100%; height: auto; border-radius: 18px;
+    border: 1px solid var(--border);
+    transform: rotate(-2deg);
+    box-shadow: 6px 6px 0 var(--mint);
+    transition: transform 0.3s var(--ease-pop), box-shadow 0.3s var(--ease-pop);
+  }
+  .about-photo:hover { transform: rotate(0) scale(1.02); box-shadow: 8px 9px 0 var(--mint); }
+  @media (max-width: 700px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .about-photo { max-width: 230px; }
+  }
   .about p { color: var(--muted); font-size: 1.12rem; max-width: 62ch; }
   .about strong { color: var(--text); }
   .about a { color: var(--mint); text-decoration: none; }
