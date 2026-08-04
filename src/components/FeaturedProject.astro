@@ -1,0 +1,77 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { useTranslations, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const all = await getCollection('projects', ({ data }) => data.featured);
+const project = all.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
+if (!project) throw new Error('No featured project found in src/content/projects');
+const d = project.data;
+const tagline = lang === 'en' ? d.tagline_en : d.tagline_es;
+const alt = lang === 'en' ? d.imageAlt_en : d.imageAlt_es;
+---
+<section class="reveal" id="work">
+  <div class="sec-head"><h2>{t('work.title')}</h2><span class="meta">{t('work.meta')}</span></div>
+  <div class="proj">
+    <div class="proj-info">
+      <div class="meta">{d.date.getFullYear()} · web app</div>
+      <h3>{d.title}</h3>
+      <p>{tagline}</p>
+      <div class="chips">{d.stack.map((s) => <span class="chip">{s}</span>)}</div>
+      <div class="proj-links">
+        {d.url && <a href={d.url}>{t('work.demo')}</a>}
+        {d.repo && <a href={d.repo}>{t('work.code')}</a>}
+      </div>
+    </div>
+    <div class="proj-shot"><Image src={d.image} alt={alt} /></div>
+  </div>
+</section>
+<style>
+  .proj {
+    position: relative; border: 1px solid var(--border); border-radius: 18px;
+    background: var(--surface); overflow: hidden;
+    display: grid; grid-template-columns: 1.05fr 1fr;
+  }
+  @media (max-width: 800px) { .proj { grid-template-columns: 1fr; } }
+  .proj::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), oklch(0.80 0.13 160 / 0.08), transparent 70%);
+    transition: opacity 0.3s var(--ease);
+  }
+  .proj:hover::before { opacity: 1; }
+  .proj-info { padding: clamp(1.8rem, 4vw, 3rem); }
+  .proj-info .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--mint); margin-bottom: 0.8rem; }
+  .proj-info h3 { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800; letter-spacing: -0.02em; }
+  .proj-info p { color: var(--muted); margin-top: 0.9rem; max-width: 48ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.4rem 0 1.8rem; }
+  .chip {
+    font-family: var(--mono); font-size: 0.75rem; font-weight: 600; padding: 0.3rem 0.75rem; border-radius: 99px;
+    transition: transform 0.25s var(--ease-pop);
+  }
+  .chip:nth-child(3n+1) { background: var(--mint-dim); color: var(--mint); rotate: -1.5deg; }
+  .chip:nth-child(3n+2) { background: oklch(0.58 0.16 45 / 0.16); color: oklch(0.75 0.14 45); rotate: 1.5deg; }
+  .chip:nth-child(3n)   { background: oklch(0.88 0.11 95 / 0.14); color: var(--butter); rotate: -1deg; }
+  .chip:hover { transform: scale(1.08) rotate(0); }
+  .proj-links { display: flex; gap: 1.2rem; }
+  .proj-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; border-bottom: 1px solid var(--coral); padding-bottom: 1px; }
+  .proj-links a:hover { color: var(--coral); }
+  .proj-shot { border-left: 1px solid var(--border); background: oklch(0.16 0.018 160); display: flex; align-items: center; padding: clamp(1.2rem, 3vw, 2.2rem); }
+  @media (max-width: 800px) { .proj-shot { border-left: 0; border-top: 1px solid var(--border); } }
+  .proj-shot img {
+    width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border);
+    transform: rotate(2.5deg); transition: transform 0.8s var(--ease);
+  }
+  .reveal.in .proj-shot img { transform: rotate(1deg); }
+  .proj:hover .proj-shot img { transform: rotate(0); }
+</style>
+<script>
+  document.querySelectorAll('.proj').forEach((el) => {
+    (el as HTMLElement).addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect();
+      (el as HTMLElement).style.setProperty('--mx', (e as MouseEvent).clientX - r.left + 'px');
+      (el as HTMLElement).style.setProperty('--my', (e as MouseEvent).clientY - r.top + 'px');
+    });
+  });
+</script>

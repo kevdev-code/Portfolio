@@ -1,0 +1,31 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+import { experience } from '../data/experience';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<section class="reveal" id="xp">
+  <div class="sec-head"><h2>{t('xp.title')}</h2><span class="meta">{t('xp.meta')}</span></div>
+  <div class="xp">
+    {experience.map((x) => (
+      <div class="xp-row">
+        <div class="xp-when">{x.when}</div>
+        <div class="xp-what">
+          <strong>{lang === 'en' ? x.role_en : x.role_es} <span>{x.org}</span></strong>
+          <p>{lang === 'en' ? x.desc_en : x.desc_es}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+<style>
+  .xp { display: flex; flex-direction: column; }
+  .xp-row { display: grid; grid-template-columns: 140px 1fr; gap: 1.5rem; padding: 1.3rem 0; border-bottom: 1px solid var(--border); }
+  .xp-row:last-child { border-bottom: 0; }
+  @media (max-width: 600px) { .xp-row { grid-template-columns: 1fr; gap: 0.3rem; } }
+  .xp-when { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); padding-top: 0.25rem; }
+  .xp-what strong { font-size: 1.05rem; }
+  .xp-what span { color: var(--mint); }
+  .xp-what p { color: var(--muted); font-size: 0.98rem; margin-top: 0.2rem; max-width: 58ch; }
+</style>
