@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opción C — Hoja de stickers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(1 0 0);
+    --ink: oklch(0.22 0.02 160);
+    --muted: oklch(0.48 0.02 160);
+    --green: oklch(0.55 0.13 160);
+    --coral: oklch(0.68 0.17 45);
+    --butter: oklch(0.90 0.11 95);
+    --mint: oklch(0.93 0.05 160);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Bricolage Grotesque", sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+  }
+  .tag-variant {
+    position: fixed; bottom: 1rem; right: 1rem; z-index: 50;
+    background: var(--coral); color: #fff; font-weight: 700; font-size: 0.8rem;
+    padding: 0.5rem 0.9rem; border-radius: 99px;
+  }
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem clamp(1.5rem, 5vw, 4rem);
+    border-bottom: 2px solid var(--ink);
+  }
+  .logo { font-weight: 800; font-size: 1.2rem; background: var(--butter); padding: 0.2rem 0.7rem; border-radius: 8px; transform: rotate(-2deg); display: inline-block; }
+  nav { display: flex; gap: 1.5rem; align-items: center; }
+  nav a { color: var(--ink); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+  nav a:hover { color: var(--coral); }
+  .lang {
+    border: 2px solid var(--ink); border-radius: 99px; padding: 0.2rem 0.3rem;
+    display: flex; gap: 0.15rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  }
+  .lang b { background: var(--ink); color: #fff; border-radius: 99px; padding: 0.1rem 0.55rem; }
+  .lang i { font-style: normal; padding: 0.1rem 0.55rem; color: var(--muted); }
+
+  .hero {
+    padding: clamp(3.5rem, 12vh, 8rem) clamp(1.5rem, 5vw, 4rem);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .hero h1 {
+    font-size: clamp(2.6rem, 7.5vw, 5.5rem);
+    font-weight: 800; line-height: 1.06; letter-spacing: -0.03em;
+    text-wrap: balance; max-width: 18ch; margin: 0 auto;
+  }
+  .hl { position: relative; display: inline-block; padding: 0 0.15em; }
+  .hl-green { background: var(--mint); border-radius: 10px; transform: rotate(-1.5deg); }
+  .hl-coral { background: var(--butter); border-radius: 10px; transform: rotate(1.5deg); }
+  .hl { transition: transform 0.3s var(--ease); }
+  .hl:hover { transform: rotate(0) scale(1.05); }
+  .squiggle { display: block; margin: 1rem auto 0; }
+  .hero p { margin: 1.4rem auto 0; font-size: clamp(1.05rem, 2vw, 1.3rem); color: var(--muted); max-width: 42ch; }
+  .cta-row { margin-top: 2.4rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; text-decoration: none; font-weight: 700;
+    padding: 0.85rem 1.7rem; border-radius: 12px; font-size: 1rem;
+    border: 2px solid var(--ink);
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-plain { background: #fff; color: var(--ink); }
+
+  /* stickers flotantes del hero */
+  .float { position: absolute; font-weight: 700; padding: 0.4rem 1rem; border-radius: 99px; border: 2px solid var(--ink); font-size: 0.9rem; }
+  .f1 { top: 18%; left: 6%; background: var(--butter); transform: rotate(-8deg); }
+  .f2 { top: 60%; right: 7%; background: var(--mint); transform: rotate(6deg); }
+  .f3 { bottom: 10%; left: 12%; background: #fff; transform: rotate(4deg); }
+  @media (max-width: 900px) { .float { display: none; } }
+
+  section { padding: clamp(3rem, 8vh, 6rem) clamp(1.5rem, 5vw, 4rem); }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+
+  .about { max-width: 780px; margin: 0 auto; }
+  .about .card {
+    border: 2px solid var(--ink); border-radius: 20px; padding: clamp(1.5rem, 4vw, 2.5rem);
+    background: var(--mint); transform: rotate(-0.5deg); box-shadow: 6px 6px 0 var(--ink);
+  }
+  .about p { font-size: 1.15rem; max-width: 60ch; }
+  .about a { color: var(--green); font-weight: 700; }
+
+  .skills { text-align: center; }
+  .stickers { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-width: 760px; margin: 0 auto; }
+  .sticker {
+    border: 2px solid var(--ink); border-radius: 99px;
+    padding: 0.6rem 1.3rem; font-weight: 700; font-size: 1rem;
+    transition: transform 0.25s var(--ease); cursor: default;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .sticker:nth-child(4n) { background: var(--butter); transform: rotate(-3deg); }
+  .sticker:nth-child(4n+1) { background: var(--mint); transform: rotate(2deg); }
+  .sticker:nth-child(4n+2) { background: #fff; transform: rotate(-1.5deg); }
+  .sticker:nth-child(4n+3) { background: var(--coral); color: #fff; transform: rotate(3deg); }
+  .sticker:hover { transform: rotate(0) scale(1.1); }
+  .skills h3 { margin: 2rem 0 1rem; font-size: 1.05rem; color: var(--muted); }
+
+  .project { background: var(--butter); border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+  .project-grid {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 5vw, 4rem);
+    align-items: center; max-width: 1100px; margin: 0 auto;
+  }
+  @media (max-width: 800px) { .project-grid { grid-template-columns: 1fr; } }
+  .project p { font-size: 1.1rem; max-width: 55ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.3rem 0 1.8rem; }
+  .chip { font-size: 0.85rem; font-weight: 700; padding: 0.3rem 0.8rem; border-radius: 99px; background: var(--green); color: #fff; }
+  .shot {
+    border: 2px solid var(--ink); border-radius: 16px; overflow: hidden; background: #fff;
+    box-shadow: 8px 8px 0 var(--ink); transform: rotate(1.5deg);
+  }
+  .shot svg { display: block; width: 100%; height: auto; }
+
+  .contact { text-align: center; }
+  .contact p { color: var(--muted); font-size: 1.15rem; max-width: 50ch; margin: 0 auto 2rem; }
+  .links { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+  .link-big {
+    text-decoration: none; font-weight: 700; font-size: 1.05rem;
+    padding: 1rem 1.8rem; border-radius: 14px; border: 2px solid var(--ink); color: var(--ink); background: #fff;
+    box-shadow: 4px 4px 0 var(--ink);
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  .link-big:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); background: var(--mint); }
+  footer {
+    padding: 2rem clamp(1.5rem, 5vw, 4rem); color: var(--muted); font-size: 0.9rem;
+    border-top: 2px solid var(--ink); text-align: center;
+  }
+  footer a { color: var(--green); font-weight: 700; }
+
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+  .js .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    .js .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="tag-variant">Opción C · Hoja de stickers</div>
+<header>
+  <div class="logo">Kevin.</div>
+  <nav>
+    <a href="#about">Sobre mí</a>
+    <a href="#skills">Skills</a>
+    <a href="#project">Proyecto</a>
+    <a href="#contact">Contacto</a>
+    <div class="lang"><b>ES</b><i>EN</i></div>
+  </nav>
+</header>
+
+<section class="hero">
+  <span class="float f1">full-stack 🌱</span>
+  <span class="float f2">web + móvil 📱</span>
+  <span class="float f3">the dev nest 🪺</span>
+  <h1>Hago <span class="hl hl-green">apps web</span> y <span class="hl hl-coral">móviles</span> que la gente disfruta usar.</h1>
+  <svg class="squiggle" width="180" height="14" viewBox="0 0 180 14" fill="none" aria-hidden="true">
+    <path d="M2 8 Q 15 2, 30 8 T 60 8 T 90 8 T 120 8 T 150 8 T 178 8" stroke="oklch(0.68 0.17 45)" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+  <p>Soy Kevin — desarrollador full-stack, miembro de The Dev Nest. De la base de datos al último pixel, con cariño.</p>
+  <div class="cta-row">
+    <a class="btn btn-green" href="#contact">Hablemos</a>
+    <a class="btn btn-plain" href="#project">Ver mi trabajo</a>
+  </div>
+</section>
+
+<section class="about reveal" id="about">
+  <h2>Sobre mí</h2>
+  <div class="card">
+    <p>Desarrollador full-stack de día y también de noche (el café ayuda). Hago aplicaciones web y móviles completas, rápidas y con un toque de juego. Formo parte del nido en <a href="https://www.thedevnest.com/">The Dev Nest</a> 🪺.</p>
+  </div>
+</section>
+
+<section class="skills reveal" id="skills">
+  <h2>Con qué trabajo</h2>
+  <h3>Web</h3>
+  <div class="stickers">
+    <span class="sticker">React</span><span class="sticker">TypeScript</span><span class="sticker">Node.js</span><span class="sticker">Astro</span><span class="sticker">PostgreSQL</span>
+  </div>
+  <h3>Móvil</h3>
+  <div class="stickers">
+    <span class="sticker">React Native</span><span class="sticker">Flutter</span><span class="sticker">Expo</span>
+  </div>
+</section>
+
+<section class="project reveal" id="project">
+  <div class="project-grid">
+    <div>
+      <h2>Proyecto destacado</h2>
+      <p><strong>Proyecto Uno.</strong> El problema: [una línea del problema real]. La solución: una app que lo resuelve sin drama, rápida y al grano.</p>
+      <div class="chips"><span class="chip">React</span><span class="chip">Node.js</span><span class="chip">PostgreSQL</span></div>
+      <a class="btn btn-green" href="#">Ver demo</a>
+    </div>
+    <div class="shot">
+      <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Captura del proyecto destacado">
+        <rect width="480" height="320" fill="oklch(0.97 0.01 160)"/>
+        <rect width="480" height="36" fill="oklch(0.93 0.02 160)"/>
+        <circle cx="20" cy="18" r="6" fill="oklch(0.68 0.17 45)"/><circle cx="40" cy="18" r="6" fill="oklch(0.55 0.13 160)"/><circle cx="60" cy="18" r="6" fill="oklch(0.85 0.05 160)"/>
+        <rect x="30" y="70" width="200" height="22" rx="6" fill="oklch(0.35 0.05 160)"/>
+        <rect x="30" y="110" width="300" height="12" rx="6" fill="oklch(0.75 0.03 160)"/>
+        <rect x="30" y="132" width="260" height="12" rx="6" fill="oklch(0.75 0.03 160)"/>
+        <rect x="30" y="170" width="130" height="40" rx="10" fill="oklch(0.55 0.13 160)"/>
+        <rect x="290" y="70" width="160" height="180" rx="12" fill="oklch(0.88 0.04 160)"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="contact reveal" id="contact">
+  <h2>Hagamos algo juntos</h2>
+  <p>¿Tienes una idea, un proyecto o un bug existencial? Escríbeme por donde prefieras — respondo rápido.</p>
+  <div class="links">
+    <a class="link-big" href="#">✉️ Email</a>
+    <a class="link-big" href="#">💬 WhatsApp</a>
+    <a class="link-big" href="#">GitHub</a>
+    <a class="link-big" href="#">LinkedIn</a>
+  </div>
+</section>
+
+<footer>
+  Hecho con Astro y terquedad · Miembro de <a href="https://www.thedevnest.com/">The Dev Nest</a>
+</footer>
+
+<script>
+  document.documentElement.classList.replace('no-js', 'js');
+  const io = new IntersectionObserver((es) => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

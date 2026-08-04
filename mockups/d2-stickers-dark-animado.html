@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opción D2 — Stickers de noche · fidelidad final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(0.18 0.03 160);
+    --surface: oklch(0.24 0.035 160);
+    --line: oklch(0.95 0.01 160);
+    --text: oklch(0.95 0.01 160);
+    --muted: oklch(0.72 0.02 160);
+    --mint: oklch(0.85 0.10 160);
+    --butter: oklch(0.88 0.11 95);
+    --coral: oklch(0.58 0.16 45);
+    --green-btn: oklch(0.80 0.13 160);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-pop: cubic-bezier(0.16, 1, 0.3, 1); /* expo-out veloz: pop sin rebote */
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Bricolage Grotesque", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.65;
+    overflow-x: hidden;
+  }
+  /* grano sutil — textura de imprenta, no ruido digital */
+  .grain {
+    position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .tag-variant {
+    position: fixed; bottom: 1rem; right: 1rem; z-index: 50;
+    background: var(--butter); color: var(--bg); font-weight: 700; font-size: 0.8rem;
+    padding: 0.5rem 0.9rem; border-radius: 99px; transform: rotate(2deg);
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem clamp(1.5rem, 5vw, 4rem);
+    background: oklch(0.18 0.03 160 / 0.92);
+    border-bottom: 2px solid oklch(0.32 0.04 160);
+  }
+  .logo {
+    font-weight: 800; font-size: 1.2rem; background: var(--butter); color: var(--bg);
+    padding: 0.2rem 0.7rem; border-radius: 8px; transform: rotate(-2deg); display: inline-block;
+    transition: transform 0.3s var(--ease-pop);
+  }
+  .logo:hover { transform: rotate(2deg) scale(1.06); }
+  nav { display: flex; gap: 1.5rem; align-items: center; }
+  nav > a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; position: relative; }
+  nav > a::after {
+    content: ""; position: absolute; left: 0; right: 100%; bottom: -4px; height: 3px;
+    background: var(--coral); border-radius: 3px; transition: right 0.3s var(--ease);
+  }
+  nav > a:hover::after { right: 0; }
+  .lang {
+    border: 2px solid var(--line); border-radius: 99px; padding: 0.2rem 0.3rem;
+    display: flex; gap: 0.15rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    position: relative;
+  }
+  .lang b { background: var(--line); color: var(--bg); border-radius: 99px; padding: 0.1rem 0.55rem; }
+  .lang i { font-style: normal; padding: 0.1rem 0.55rem; color: var(--muted); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: clamp(4rem, 14vh, 9rem) clamp(1.5rem, 5vw, 4rem) clamp(4rem, 10vh, 7rem);
+    text-align: center; position: relative;
+  }
+  .hero h1 {
+    font-size: clamp(2.7rem, 7.8vw, 5.8rem);
+    font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+    text-wrap: balance; max-width: 18ch; margin: 0 auto;
+  }
+  .hero h1 .word { display: inline-block; }
+  .js .hero h1 .word {
+    opacity: 0; transform: translateY(0.6em) rotate(4deg);
+    animation: word-in 0.7s var(--ease) forwards;
+    animation-delay: calc(var(--i) * 70ms);
+  }
+  @keyframes word-in { to { opacity: 1; transform: none; } }
+  .hl { position: relative; display: inline-block; padding: 0 0.18em; border-radius: 10px; transition: transform 0.3s var(--ease-pop); }
+  .hl-mint { background: var(--mint); color: var(--bg); transform: rotate(-1.5deg); }
+  .hl-coral { background: var(--coral); color: #fff; transform: rotate(1.5deg); }
+  .hl:hover { transform: rotate(0) scale(1.06); }
+  .squiggle { display: block; margin: 1.2rem auto 0; }
+  .squiggle path { stroke-dasharray: 220; stroke-dashoffset: 0; }
+  .js .squiggle path { stroke-dashoffset: 220; animation: draw 1s var(--ease) 0.9s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .hero .sub { margin: 1.5rem auto 0; font-size: clamp(1.05rem, 2vw, 1.3rem); color: var(--muted); max-width: 42ch; }
+  .js .fade-up { opacity: 0; transform: translateY(20px); animation: word-in 0.7s var(--ease) forwards; }
+  .js .sub.fade-up { animation-delay: 1s; }
+  .js .cta-row.fade-up { animation-delay: 1.15s; }
+  .cta-row { margin-top: 2.6rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; text-decoration: none; font-weight: 700;
+    padding: 0.9rem 1.8rem; border-radius: 12px; font-size: 1rem;
+    border: 2px solid var(--line);
+    transition: box-shadow 0.2s var(--ease); will-change: transform;
+    box-shadow: 4px 4px 0 var(--coral);
+  }
+  .btn:hover { box-shadow: 7px 7px 0 var(--coral); }
+  .btn:active { box-shadow: 1px 1px 0 var(--coral); }
+  .btn-green { background: var(--green-btn); color: var(--bg); border-color: var(--green-btn); }
+  .btn-plain { background: transparent; color: var(--text); }
+
+  /* stickers flotantes: entrada + deriva permanente + parallax por JS */
+  .float {
+    position: absolute; font-weight: 700; padding: 0.45rem 1.05rem; border-radius: 99px;
+    font-size: 0.95rem; will-change: transform; cursor: default;
+  }
+  .float .inner { display: inline-block; }
+  .js .float { opacity: 0; animation: sticker-in 0.6s var(--ease-pop) forwards; }
+  @keyframes sticker-in { from { opacity: 0; transform: scale(0.4) rotate(0deg); } to { opacity: 1; transform: none; } }
+  .js .float .inner { animation: drift 5s ease-in-out infinite alternate; }
+  @keyframes drift { from { transform: translateY(-6px); } to { transform: translateY(7px); } }
+  .f1 { top: 20%; left: 7%; background: var(--butter); color: var(--bg); rotate: -8deg; animation-delay: 1.2s !important; }
+  .f2 { top: 58%; right: 7%; background: var(--mint); color: var(--bg); rotate: 6deg; animation-delay: 1.35s !important; }
+  .f3 { bottom: 8%; left: 13%; background: var(--surface); color: var(--text); border: 2px solid var(--line); rotate: 4deg; animation-delay: 1.5s !important; }
+  .f2 .inner { animation-duration: 6.3s !important; }
+  .f3 .inner { animation-duration: 7.1s !important; }
+  @media (max-width: 900px) { .float { display: none; } }
+
+  /* ── MARQUEE ── */
+  .marquee {
+    border-top: 2px solid oklch(0.32 0.04 160); border-bottom: 2px solid oklch(0.32 0.04 160);
+    overflow: hidden; padding: 0.8rem 0; background: var(--surface);
+    transform: rotate(-1deg) scale(1.02); margin: 2rem 0;
+  }
+  .marquee-track { display: flex; gap: 2.5rem; width: max-content; animation: scroll-x 22s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  @keyframes scroll-x { to { transform: translateX(-50%); } }
+  .marquee span { font-weight: 800; font-size: 1.1rem; white-space: nowrap; color: var(--muted); }
+  .marquee span b { color: var(--butter); font-weight: 800; }
+
+  /* ── SECCIONES ── */
+  section { padding: clamp(3.5rem, 9vh, 7rem) clamp(1.5rem, 5vw, 4rem); }
+  h2 { font-size: clamp(1.9rem, 4.2vw, 3rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1.6rem; }
+
+  .js .reveal { opacity: 0; transform: translateY(30px) rotate(0.5deg); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  .about { max-width: 800px; margin: 0 auto; }
+  .about .card {
+    border: 2px solid var(--mint); border-radius: 20px; padding: clamp(1.6rem, 4vw, 2.6rem);
+    background: var(--surface); transform: rotate(-0.5deg); box-shadow: 6px 6px 0 var(--mint);
+    transition: transform 0.35s var(--ease-pop), box-shadow 0.35s var(--ease-pop);
+  }
+  .about .card:hover { transform: rotate(0.3deg) translateY(-4px); box-shadow: 9px 10px 0 var(--mint); }
+  .about p { font-size: 1.15rem; max-width: 60ch; }
+  .about a { color: var(--mint); font-weight: 700; }
+
+  .skills { text-align: center; }
+  .stickers { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-width: 780px; margin: 0 auto; }
+  .sticker {
+    border-radius: 99px; padding: 0.65rem 1.35rem; font-weight: 700; font-size: 1rem;
+    cursor: default; will-change: transform;
+    transition: transform 0.3s var(--ease-pop), box-shadow 0.3s var(--ease-pop);
+  }
+  .js .skills .reveal-stagger .sticker { opacity: 0; transform: scale(0.5); transition: opacity 0.5s var(--ease-pop), transform 0.5s var(--ease-pop); transition-delay: calc(var(--i) * 60ms); }
+  .js .skills .reveal-stagger.in .sticker { opacity: 1; }
+  .sticker:nth-child(4n)   { background: var(--butter); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.45 0.06 95); }
+  .sticker:nth-child(4n+1) { background: var(--mint); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); }
+  .sticker:nth-child(4n+2) { background: var(--surface); color: var(--text); border: 2px solid var(--line); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); }
+  .sticker:nth-child(4n+3) { background: var(--coral); color: #fff; box-shadow: 3px 3px 0 oklch(0.35 0.1 45); }
+  .js .skills .reveal-stagger.in .sticker:nth-child(4n)   { transform: rotate(-3deg) scale(1); }
+  .js .skills .reveal-stagger.in .sticker:nth-child(4n+1) { transform: rotate(2deg) scale(1); }
+  .js .skills .reveal-stagger.in .sticker:nth-child(4n+2) { transform: rotate(-1.5deg) scale(1); }
+  .js .skills .reveal-stagger.in .sticker:nth-child(4n+3) { transform: rotate(3deg) scale(1); }
+  .skills .sticker:hover { transform: rotate(0) scale(1.14) !important; }
+  .skills h3 { margin: 2.2rem 0 1.1rem; font-size: 1.05rem; color: var(--muted); }
+
+  /* ── PROYECTO: banda mantequilla ── */
+  .project { background: var(--butter); color: var(--bg); position: relative; }
+  .project-grid {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center; max-width: 1120px; margin: 0 auto;
+  }
+  @media (max-width: 800px) { .project-grid { grid-template-columns: 1fr; } }
+  .project h2 { color: var(--bg); }
+  .project p { font-size: 1.12rem; max-width: 55ch; color: oklch(0.3 0.03 160); }
+  .project strong { color: var(--bg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.3rem 0 1.9rem; }
+  .chip { font-size: 0.85rem; font-weight: 700; padding: 0.32rem 0.85rem; border-radius: 99px; background: var(--bg); color: var(--text); }
+  .project .btn { border-color: var(--bg); background: var(--bg); color: var(--text); box-shadow: 4px 4px 0 var(--coral); }
+  .shot {
+    border: 2px solid var(--bg); border-radius: 16px; overflow: hidden; background: #fff;
+    box-shadow: 10px 10px 0 var(--bg);
+    transform: rotate(4deg); transition: transform 0.9s var(--ease);
+  }
+  .reveal.in .shot { transform: rotate(1.5deg); }
+  .shot:hover { transform: rotate(0deg) scale(1.02); }
+  .shot svg { display: block; width: 100%; height: auto; }
+
+  /* ── CONTACTO ── */
+  .contact { text-align: center; }
+  .contact p { color: var(--muted); font-size: 1.15rem; max-width: 50ch; margin: 0 auto 2.2rem; }
+  .links { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+  .link-big {
+    text-decoration: none; font-weight: 700; font-size: 1.05rem;
+    padding: 1rem 1.9rem; border-radius: 14px; border: 2px solid var(--line); color: var(--text); background: var(--surface);
+    box-shadow: 4px 4px 0 var(--mint); will-change: transform;
+    transition: box-shadow 0.25s var(--ease), background 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  .link-big:hover { box-shadow: 7px 7px 0 var(--coral); background: var(--mint); color: var(--bg); }
+  footer {
+    padding: 2.2rem clamp(1.5rem, 5vw, 4rem); color: var(--muted); font-size: 0.9rem;
+    border-top: 2px solid oklch(0.32 0.04 160); text-align: center;
+  }
+  footer a { color: var(--mint); font-weight: 700; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    .js .hero h1 .word, .js .float, .js .fade-up, .js .reveal, .js .skills .reveal-stagger .sticker { opacity: 1 !important; transform: none !important; }
+    .js .squiggle path { stroke-dashoffset: 0 !important; }
+    .marquee-track { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="tag-variant">D2 · fidelidad final</div>
+<header>
+  <div class="logo">Kevin.</div>
+  <nav>
+    <a href="#about">Sobre mí</a>
+    <a href="#skills">Skills</a>
+    <a href="#project">Proyecto</a>
+    <a href="#contact">Contacto</a>
+    <div class="lang"><b>ES</b><i>EN</i></div>
+  </nav>
+</header>
+
+<section class="hero">
+  <span class="float f1"><span class="inner">full-stack 🌱</span></span>
+  <span class="float f2"><span class="inner">web + móvil 📱</span></span>
+  <span class="float f3"><span class="inner">the dev nest 🪺</span></span>
+  <h1 id="headline">Hago <span class="hl hl-mint">apps web</span> y <span class="hl hl-coral">móviles</span> que la gente disfruta usar.</h1>
+  <svg class="squiggle" width="180" height="14" viewBox="0 0 180 14" fill="none" aria-hidden="true">
+    <path d="M2 8 Q 15 2, 30 8 T 60 8 T 90 8 T 120 8 T 150 8 T 178 8" stroke="oklch(0.58 0.16 45)" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+  <p class="sub fade-up">Soy Kevin — desarrollador full-stack, miembro de The Dev Nest. De la base de datos al último pixel, con cariño.</p>
+  <div class="cta-row fade-up">
+    <a class="btn btn-green magnetic" href="#contact">Hablemos</a>
+    <a class="btn btn-plain magnetic" href="#project">Ver mi trabajo</a>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>WEB <b>✦</b></span><span>MÓVIL <b>✦</b></span><span>FRONTEND <b>✦</b></span><span>BACKEND <b>✦</b></span><span>APIS <b>✦</b></span><span>UI QUE SE SIENTE BIEN <b>✦</b></span>
+    <span>WEB <b>✦</b></span><span>MÓVIL <b>✦</b></span><span>FRONTEND <b>✦</b></span><span>BACKEND <b>✦</b></span><span>APIS <b>✦</b></span><span>UI QUE SE SIENTE BIEN <b>✦</b></span>
+  </div>
+</div>
+
+<section class="about reveal" id="about">
+  <h2>Sobre mí</h2>
+  <div class="card">
+    <p>Desarrollador full-stack de día y también de noche (el café ayuda). Hago aplicaciones web y móviles completas, rápidas y con un toque de juego. Formo parte del nido en <a href="https://www.thedevnest.com/">The Dev Nest</a> 🪺.</p>
+  </div>
+</section>
+
+<section class="skills" id="skills">
+  <h2 class="reveal">Con qué trabajo</h2>
+  <h3>Web</h3>
+  <div class="stickers reveal-stagger">
+    <span class="sticker" style="--i:0">React</span><span class="sticker" style="--i:1">TypeScript</span><span class="sticker" style="--i:2">Node.js</span><span class="sticker" style="--i:3">Astro</span><span class="sticker" style="--i:4">PostgreSQL</span>
+  </div>
+  <h3>Móvil</h3>
+  <div class="stickers reveal-stagger">
+    <span class="sticker" style="--i:0">React Native</span><span class="sticker" style="--i:1">Flutter</span><span class="sticker" style="--i:2">Expo</span>
+  </div>
+</section>
+
+<section class="project reveal" id="project">
+  <div class="project-grid">
+    <div>
+      <h2>Proyecto destacado</h2>
+      <p><strong>Proyecto Uno.</strong> El problema: [una línea del problema real]. La solución: una app que lo resuelve sin drama, rápida y al grano.</p>
+      <div class="chips"><span class="chip">React</span><span class="chip">Node.js</span><span class="chip">PostgreSQL</span></div>
+      <a class="btn magnetic" href="#">Ver demo</a>
+    </div>
+    <div class="shot">
+      <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Captura del proyecto destacado">
+        <rect width="480" height="320" fill="oklch(0.97 0.01 160)"/>
+        <rect width="480" height="36" fill="oklch(0.93 0.02 160)"/>
+        <circle cx="20" cy="18" r="6" fill="oklch(0.58 0.16 45)"/><circle cx="40" cy="18" r="6" fill="oklch(0.55 0.13 160)"/><circle cx="60" cy="18" r="6" fill="oklch(0.85 0.05 160)"/>
+        <rect x="30" y="70" width="200" height="22" rx="6" fill="oklch(0.35 0.05 160)"/>
+        <rect x="30" y="110" width="300" height="12" rx="6" fill="oklch(0.75 0.03 160)"/>
+        <rect x="30" y="132" width="260" height="12" rx="6" fill="oklch(0.75 0.03 160)"/>
+        <rect x="30" y="170" width="130" height="40" rx="10" fill="oklch(0.55 0.13 160)"/>
+        <rect x="290" y="70" width="160" height="180" rx="12" fill="oklch(0.88 0.04 160)"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="contact reveal" id="contact">
+  <h2>Hagamos algo juntos</h2>
+  <p>¿Tienes una idea, un proyecto o un bug existencial? Escríbeme por donde prefieras — respondo rápido.</p>
+  <div class="links">
+    <a class="link-big magnetic" href="#">✉️ Email</a>
+    <a class="link-big magnetic" href="#">💬 WhatsApp</a>
+    <a class="link-big magnetic" href="#">GitHub</a>
+    <a class="link-big magnetic" href="#">LinkedIn</a>
+  </div>
+</section>
+
+<footer>
+  Hecho con Astro y terquedad · Miembro de <a href="https://www.thedevnest.com/">The Dev Nest</a>
+</footer>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.documentElement.classList.replace('no-js', 'js');
+
+  // titular palabra por palabra (conservando los resaltados)
+  const h = document.getElementById('headline');
+  const wrapWords = (node) => {
+    [...node.childNodes].forEach(child => {
+      if (child.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        child.textContent.split(/(\s+)/).forEach(part => {
+          if (/^\s+$/.test(part) || part === '') { frag.appendChild(document.createTextNode(part)); }
+          else { const s = document.createElement('span'); s.className = 'word'; s.textContent = part; frag.appendChild(s); }
+        });
+        node.replaceChild(frag, child);
+      } else if (child.classList && child.classList.contains('hl')) {
+        child.classList.add('word');
+      }
+    });
+  };
+  wrapWords(h);
+  h.querySelectorAll('.word').forEach((w, i) => w.style.setProperty('--i', i));
+
+  // reveals con stagger
+  const io = new IntersectionObserver((es) => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.15 });
+  document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => io.observe(el));
+
+  if (!reduced) {
+    // parallax suave de stickers del hero con lerp
+    const floats = [...document.querySelectorAll('.float')];
+    let mx = 0, my = 0, cx = 0, cy = 0;
+    addEventListener('mousemove', (e) => {
+      mx = (e.clientX / innerWidth - 0.5); my = (e.clientY / innerHeight - 0.5);
+    }, { passive: true });
+    const depths = [18, 26, 14];
+    (function loop() {
+      cx += (mx - cx) * 0.06; cy += (my - cy) * 0.06;
+      floats.forEach((f, i) => { f.style.translate = `${cx * depths[i]}px ${cy * depths[i]}px`; });
+      requestAnimationFrame(loop);
+    })();
+
+    // botones magnéticos
+    document.querySelectorAll('.magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width / 2) * 0.18;
+        const y = (e.clientY - r.top - r.height / 2) * 0.3;
+        btn.style.translate = `${x}px ${y}px`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transition = 'translate 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        btn.style.translate = '0px 0px';
+        setTimeout(() => btn.style.transition = '', 400);
+      });
+    });
+  }
+</script>
+</body>
+</html>
