@@ -54,6 +54,7 @@ const t = useTranslations(lang);
   .squiggle path { stroke-dasharray: 220; stroke-dashoffset: 0; }
   :global(.js) .squiggle path { stroke-dashoffset: 220; animation: draw 0.9s var(--ease) 0.8s forwards; }
   .hero p.intro { margin-top: 1.6rem; color: var(--muted); font-size: 1.1rem; max-width: 48ch; }
+  .hero p.intro a { color: var(--text); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--mint); }
   :global(.js) .fade-up { opacity: 0; animation: word-in 0.7s var(--ease) forwards; }
   :global(.js) p.intro.fade-up { animation-delay: 0.7s; }
   :global(.js) .cta-row.fade-up { animation-delay: 0.85s; }
