@@ -2,7 +2,7 @@
 export const experience = [
   {
     when: '2025 – hoy',
-    role_en: 'Developer', role_es: 'Developer',
+    role_en: 'Co-founder & Developer', role_es: 'Cofundador y developer',
     org: '@ The Dev Nest',
     desc_en: 'Web and mobile development at the studio; client projects end to end.',
     desc_es: 'Desarrollo web y móvil en el estudio; proyectos de clientes de principio a fin.',
