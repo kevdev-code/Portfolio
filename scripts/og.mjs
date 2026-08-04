@@ -10,7 +10,7 @@ const svg = `
   <text x="80" y="360" font-family="Arial Black, sans-serif" font-size="72" font-weight="900" fill="#e8ecea">Kevin López</text>
   <text x="80" y="430" font-family="Arial, sans-serif" font-size="34" fill="#949e99">full-stack developer · the dev nest</text>
 </svg>`;
-// KEVIN-TODO: oklch() colors caused sharp/librsvg to render solid black; converted to hex equivalents (see task-11 brief) for this build-time script only. public/favicon.svg keeps oklch() since browsers render it fine.
+// NOTE: oklch() colors caused sharp/librsvg to render solid black; converted to hex equivalents (see task-11 brief) for this build-time script only. public/favicon.svg keeps oklch() since browsers render it fine.
 // KEVIN-TODO: nombre real en el texto de arriba
 
 await sharp(Buffer.from(svg)).png().toFile('public/og.png');
