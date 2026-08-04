@@ -10,7 +10,7 @@ const t = useTranslations(lang);
   <div class="xp">
     {experience.map((x) => (
       <div class="xp-row">
-        <div class="xp-when">{x.when}</div>
+        <div class="xp-when">{lang === 'en' ? x.when_en : x.when_es}</div>
         <div class="xp-what">
           <strong>{lang === 'en' ? x.role_en : x.role_es} <span>{x.org}</span></strong>
           <p>{lang === 'en' ? x.desc_en : x.desc_es}</p>
