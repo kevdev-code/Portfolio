@@ -2,23 +2,30 @@
 const letters = 'kevindlv'.split('');
 ---
 <div class="intro" id="intro" aria-hidden="true">
-  <span class="intro-logo">{letters.map((c, i) => <span class="ch" style={`--i:${i}`}>{c}</span>)}</span>
+  <div class="veil"></div>
+  <span class="intro-logo" id="intro-logo">{letters.map((c, i) => <span class="ch" style={`--i:${i}`}>{c}</span>)}</span>
 </div>
 <style>
   .intro {
     position: fixed; inset: 0; z-index: 60;
-    background: var(--bg);
     display: none;
     place-items: center;
-    transition: transform 0.6s var(--ease);
+    pointer-events: auto;
   }
   :global(.intro-play) .intro { display: grid; }
-  .intro.out { transform: translateY(-100%); }
+  .veil {
+    position: absolute; inset: 0;
+    background: var(--bg);
+    transition: transform 0.6s var(--ease);
+  }
+  .intro.out .veil { transform: translateY(-100%); }
   .intro-logo {
+    position: relative;
     background: var(--butter); color: var(--bg);
     font-weight: 800; font-size: clamp(2.2rem, 8vw, 4.5rem);
     padding: 0.25em 0.7em; border-radius: 18px;
     transform: rotate(-2deg); letter-spacing: -0.02em;
+    will-change: transform;
   }
   .ch { display: inline-block; opacity: 0; transform: translateY(0.5em) scale(1.35); }
   :global(.intro-play) .ch {
@@ -36,17 +43,76 @@ const letters = 'kevindlv'.split('');
   try { seen = sessionStorage.getItem('introSeen'); } catch {}
   if (!reduced && !seen && intro) {
     root.classList.add('intro-play');
-    const finish = () => {
-      intro.classList.add('out');
-      root.classList.add('ready');
-      window.removeEventListener('keydown', onKey);
-      setTimeout(() => intro.remove(), 700);
-    };
-    const t = setTimeout(finish, 1700);
-    const skip = () => { clearTimeout(t); finish(); };
+    const target = document.querySelector('header .logo') as HTMLElement | null;
+    if (target) target.style.visibility = 'hidden';
+
+    let flight: Animation | null = null;
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Enter') skip();
     };
+
+    const land = () => {
+      window.removeEventListener('keydown', onKey);
+      if (target) {
+        target.style.visibility = '';
+        target.animate(
+          [
+            { transform: 'rotate(-2deg) scale(1.14)' },
+            { transform: 'rotate(-2deg) scale(1)' },
+          ],
+          { duration: 250, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+        );
+      }
+      intro.remove();
+      root.classList.add('ready');
+    };
+
+    const fly = () => {
+      intro.classList.add('out');
+      if (!target) {
+        // defensive fallback: no logo found, behave like the old curtain-only intro
+        setTimeout(land, 700);
+        return;
+      }
+      const flyer = document.getElementById('intro-logo') as HTMLElement;
+      // measure un-rotated boxes so the scale/translate math is exact,
+      // then restore the resting rotate(-2deg) before animating
+      const flyerTransform = flyer.style.transform;
+      flyer.style.transform = 'none';
+      const first = flyer.getBoundingClientRect();
+      flyer.style.transform = flyerTransform;
+      const targetTransform = target.style.transform;
+      target.style.transform = 'none';
+      const last = target.getBoundingClientRect();
+      target.style.transform = targetTransform;
+
+      const dx = last.left - first.left;
+      const dy = last.top - first.top;
+      const s = last.width / first.width;
+      flyer.style.transformOrigin = 'top left';
+      flight = flyer.animate(
+        [
+          { transform: 'rotate(-2deg)' },
+          { transform: `translate(${dx * 0.5}px, ${dy * 0.5 - 60}px) scale(${(1 + s) / 2}) rotate(4deg)`, offset: 0.55 },
+          { transform: `translate(${dx}px, ${dy}px) scale(${s}) rotate(-2deg)` },
+        ],
+        { duration: 800, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+      );
+      flight.onfinish = land;
+    };
+
+    const t = setTimeout(fly, 1350);
+
+    const skip = () => {
+      clearTimeout(t);
+      flight?.cancel();
+      window.removeEventListener('keydown', onKey);
+      intro.remove();
+      if (target) target.style.visibility = '';
+      root.classList.add('ready');
+    };
+
     intro.addEventListener('click', skip);
     window.addEventListener('keydown', onKey);
     try { sessionStorage.setItem('introSeen', '1'); } catch {}
