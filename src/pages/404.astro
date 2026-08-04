@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import { useTranslations } from '../i18n/ui';
+const tEn = useTranslations('en');
+const tEs = useTranslations('es');
+---
+<Base lang="en">
+  <main class="wrap" style="padding: 6rem 0; text-align: center;">
+    <h1 style="font-size: clamp(3rem, 10vw, 6rem); font-weight: 800;">404</h1>
+    <p style="margin-top: 1rem;">{tEn('e404.joke')}</p>
+    <p style="margin-top: 0.5rem;" lang="es">{tEs('e404.joke')}</p>
+    <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+      <a class="btn btn-solid" href="/">{tEn('e404.back')}</a>
+      <a class="btn btn-line" href="/es/">{tEs('e404.back')}</a>
+    </div>
+  </main>
+</Base>
