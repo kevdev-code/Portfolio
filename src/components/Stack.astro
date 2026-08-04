@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { useTranslations, type Lang } from '../i18n/ui';
 import { skills } from '../data/skills';
 interface Props { lang: Lang }
@@ -9,19 +10,19 @@ const t = useTranslations(lang);
   <div class="sec-head reveal"><h2>{t('stack.title')}</h2><span class="meta">{t('stack.meta')}</span></div>
   <h3>{t('stack.web')}</h3>
   <div class="stickers reveal-stagger">
-    {skills.web.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
+    {skills.web.map((s, i) => <span class="sticker" style={`--i:${i}`}><Icon name={s.icon} /> {s.name}</span>)}
   </div>
   <h3>{t('stack.backend')}</h3>
   <div class="stickers reveal-stagger">
-    {skills.backend.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
+    {skills.backend.map((s, i) => <span class="sticker" style={`--i:${i}`}><Icon name={s.icon} /> {s.name}</span>)}
   </div>
   <h3>{t('stack.mobile')}</h3>
   <div class="stickers reveal-stagger">
-    {skills.mobile.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
+    {skills.mobile.map((s, i) => <span class="sticker" style={`--i:${i}`}><Icon name={s.icon} /> {s.name}</span>)}
   </div>
   <h3>{t('stack.services')}</h3>
   <div class="stickers reveal-stagger">
-    {skills.services.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
+    {skills.services.map((s, i) => <span class="sticker" style={`--i:${i}`}><Icon name={s.icon} /> {s.name}</span>)}
   </div>
 </section>
 <style>
@@ -43,4 +44,6 @@ const t = useTranslations(lang);
   :global(.js .reveal-stagger.in .sticker:nth-child(4n+3)) { transform: rotate(3deg) scale(1); }
   .sticker:hover { transform: rotate(0) scale(1.12) !important; }
   .skills h3 { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); margin: 1.8rem 0 1rem; }
+  .sticker { display: inline-flex; align-items: center; gap: 0.5em; }
+  .sticker svg { width: 1em; height: 1em; flex-shrink: 0; }
 </style>
