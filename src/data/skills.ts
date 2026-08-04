@@ -1,5 +1,6 @@
-// KEVIN-TODO: tecnologías reales del autor
 export const skills = {
-  web: ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL'],
-  mobile: ['React Native', 'Flutter', 'Expo'],
+  web: ['React 19', 'TypeScript', 'Vite'],
+  backend: ['Node.js', 'Bun', 'Express 5', 'Fastify', 'PHP · Symfony', 'PostgreSQL', 'Redis', 'Docker'],
+  mobile: ['Flutter', 'Dart'],
+  services: ['Stripe', 'Shopify API', 'WhatsApp Business API', 'Claude API'],
 } as const;

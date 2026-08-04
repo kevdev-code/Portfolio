@@ -11,9 +11,17 @@ const t = useTranslations(lang);
   <div class="stickers reveal-stagger">
     {skills.web.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
   </div>
+  <h3>{t('stack.backend')}</h3>
+  <div class="stickers reveal-stagger">
+    {skills.backend.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
+  </div>
   <h3>{t('stack.mobile')}</h3>
   <div class="stickers reveal-stagger">
     {skills.mobile.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
+  </div>
+  <h3>{t('stack.services')}</h3>
+  <div class="stickers reveal-stagger">
+    {skills.services.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
   </div>
 </section>
 <style>
