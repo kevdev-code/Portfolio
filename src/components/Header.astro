@@ -12,6 +12,7 @@ const otherLang: Lang = lang === 'en' ? 'es' : 'en';
       <a href="#about">{t('nav.about')}</a>
       <a href="#skills">{t('nav.stack')}</a>
       <a href="#work">{t('nav.work')}</a>
+      <a href="#process">{t('nav.process')}</a>
       <a href="#contact">{t('nav.contact')}</a>
       <a class="lang" href={localizePath(otherLang)} data-lang-switch aria-label={`${lang.toUpperCase()}/${otherLang.toUpperCase()}: ${otherLang === 'es' ? 'Cambiar a español' : 'Switch to English'}`}>
         <b>{lang.toUpperCase()}</b><i>{otherLang.toUpperCase()}</i>
