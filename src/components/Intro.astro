@@ -32,17 +32,24 @@ const letters = 'kevindlv'.split('');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const intro = document.getElementById('intro');
   const root = document.documentElement;
-  const seen = sessionStorage.getItem('introSeen');
+  let seen: string | null = null;
+  try { seen = sessionStorage.getItem('introSeen'); } catch {}
   if (!reduced && !seen && intro) {
     root.classList.add('intro-play');
-    sessionStorage.setItem('introSeen', '1');
     const finish = () => {
       intro.classList.add('out');
       root.classList.add('ready');
+      window.removeEventListener('keydown', onKey);
       setTimeout(() => intro.remove(), 700);
     };
     const t = setTimeout(finish, 1700);
-    intro.addEventListener('click', () => { clearTimeout(t); finish(); });
+    const skip = () => { clearTimeout(t); finish(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === 'Enter') skip();
+    };
+    intro.addEventListener('click', skip);
+    window.addEventListener('keydown', onKey);
+    try { sessionStorage.setItem('introSeen', '1'); } catch {}
   } else {
     intro?.remove();
     root.classList.add('ready');

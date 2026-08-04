@@ -98,7 +98,7 @@ const t = useTranslations(lang);
       el.textContent = out;
       frame++;
       if (!done) requestAnimationFrame(tick);
-      else { el.style.minWidth = ''; }
+      else { el.style.width = ''; el.style.minWidth = ''; }
     };
     setTimeout(() => requestAnimationFrame(tick), delay);
   }
@@ -106,9 +106,10 @@ const t = useTranslations(lang);
     const words = [...document.querySelectorAll<HTMLElement>('#headline .word')];
     if (reducedS) return; // headline already fully visible, leave it
     words.forEach((w) => {
-      // reserve final width to avoid layout shift while scrambling (proportional font)
+      // reserve final width to avoid layout shift while scrambling (proportional font);
+      // fixed width (not just min-width) so wide fallback glyphs can't widen the word mid-scramble
       const width = w.getBoundingClientRect().width;
-      w.style.minWidth = width + 'px';
+      w.style.width = width + 'px';
       const finalText = w.textContent ?? '';
       w.dataset.final = finalText;
       // synchronous first pass: whole headline shows glyphs instantly, no flash of real text

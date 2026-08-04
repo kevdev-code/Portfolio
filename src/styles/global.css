@@ -71,7 +71,7 @@ section { padding: clamp(3.5rem, 9vh, 6.5rem) 0; border-top: 1px solid var(--bor
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
-  .js .reveal, .ready .hero h1 .word, .ready .fade-up, .js .reveal-stagger .sticker, .ready .float { opacity: 1 !important; transform: none !important; }
+  .js .reveal, .ready .fade-up, .js .reveal-stagger .sticker, .ready .float { opacity: 1 !important; transform: none !important; }
   .js .reveal .sec-head h2,
   .js .sec-head.reveal h2,
   .js .reveal .sec-head .meta,
