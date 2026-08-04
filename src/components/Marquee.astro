@@ -18,7 +18,8 @@ const reps = [0, 1, 2];
   .marquee {
     border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     overflow: hidden; padding: 0.75rem 0; background: var(--surface);
-    transform: rotate(-1deg) scale(1.02); margin: 1.5rem 0 0.5rem;
+    transform: rotate(-1deg) scale(1.02); margin: 2.2rem 0 0.5rem;
+    position: relative; z-index: 2;
   }
   .marquee-track { display: flex; width: max-content; animation: scroll-x 40s linear infinite reverse; }
   .marquee:hover .marquee-track { animation-play-state: paused; }

@@ -21,13 +21,13 @@ body {
 }
 .dots {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image: radial-gradient(oklch(0.35 0.03 160) 1px, transparent 1px);
+  background-image: radial-gradient(oklch(0.42 0.04 160) 1px, transparent 1px);
   background-size: 28px 28px;
-  mask-image: radial-gradient(340px circle at var(--sx, 50%) var(--sy, 30%), black 0%, transparent 100%);
-  -webkit-mask-image: radial-gradient(340px circle at var(--sx, 50%) var(--sy, 30%), black 0%, transparent 100%);
+  mask-image: radial-gradient(520px circle at var(--sx, 50%) var(--sy, 30%), black 0%, oklch(0 0 0 / 0.22) 55%, oklch(0 0 0 / 0.16) 100%);
+  -webkit-mask-image: radial-gradient(520px circle at var(--sx, 50%) var(--sy, 30%), black 0%, oklch(0 0 0 / 0.22) 55%, oklch(0 0 0 / 0.16) 100%);
 }
 .grain {
-  position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: 0.035;
+  position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 main, header, footer, .marquee { position: relative; z-index: 1; }
