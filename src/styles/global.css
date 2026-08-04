@@ -14,6 +14,11 @@
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+/* crossfade nativo entre / y /es/ (MPA view transitions; los navegadores sin soporte navegan normal) */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
 body {
   font-family: "Bricolage Grotesque", sans-serif;
   background: var(--bg); color: var(--text); line-height: 1.7;
