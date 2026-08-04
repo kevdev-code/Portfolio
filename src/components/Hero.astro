@@ -40,7 +40,7 @@ const t = useTranslations(lang);
     line-height: 1.08; letter-spacing: -0.03em; text-wrap: balance; max-width: 17ch;
   }
   .hero h1 :global(.word) { display: inline-block; }
-  :global(.js .hero h1 .word) {
+  :global(.ready .hero h1 .word) {
     opacity: 0; transform: translateY(0.5em) rotate(3deg);
     animation: word-in 0.65s var(--ease) forwards;
     animation-delay: calc(var(--i) * 60ms);
@@ -52,18 +52,18 @@ const t = useTranslations(lang);
   .hl:hover { transform: rotate(0) scale(1.05); }
   .squiggle { display: block; margin-top: 0.9rem; }
   .squiggle path { stroke-dasharray: 220; stroke-dashoffset: 0; }
-  :global(.js) .squiggle path { stroke-dashoffset: 220; animation: draw 0.9s var(--ease) 0.8s forwards; }
+  :global(.ready) .squiggle path { stroke-dashoffset: 220; animation: draw 0.9s var(--ease) 0.8s forwards; }
   .hero p.intro { margin-top: 1.6rem; color: var(--muted); font-size: 1.1rem; max-width: 48ch; }
   .hero p.intro a { color: var(--text); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--mint); }
-  :global(.js) .fade-up { opacity: 0; animation: word-in 0.7s var(--ease) forwards; }
-  :global(.js) p.intro.fade-up { animation-delay: 0.7s; }
-  :global(.js) .cta-row.fade-up { animation-delay: 0.85s; }
+  :global(.ready) .fade-up { opacity: 0; animation: word-in 0.7s var(--ease) forwards; }
+  :global(.ready) p.intro.fade-up { animation-delay: 0.7s; }
+  :global(.ready) .cta-row.fade-up { animation-delay: 0.85s; }
   .cta-row { margin-top: 2.6rem; display: flex; gap: 1rem; flex-wrap: wrap; }
 
   .float { position: absolute; font-weight: 700; padding: 0.42rem 1rem; border-radius: 99px; font-size: 0.9rem; will-change: transform; cursor: default; }
   .float .inner { display: inline-block; }
-  :global(.js) .float { opacity: 0; animation: sticker-in 0.55s var(--ease-pop) forwards; }
-  :global(.js) .float .inner { animation: drift 5.4s ease-in-out infinite alternate; }
+  :global(.ready) .float { opacity: 0; animation: sticker-in 0.55s var(--ease-pop) forwards; }
+  :global(.ready) .float .inner { animation: drift 5.4s ease-in-out infinite alternate; }
   .f1 { top: 22%; right: 16%; background: var(--butter); color: var(--bg); rotate: -7deg; animation-delay: 1s !important; }
   .f2 { top: 48%; right: 5%; background: var(--mint); color: var(--bg); rotate: 5deg; animation-delay: 1.15s !important; }
   .f3 { top: 74%; right: 22%; background: var(--surface); color: var(--text); border: 1px solid var(--border); rotate: 3deg; animation-delay: 1.3s !important; }

@@ -1,0 +1,50 @@
+---
+const letters = 'kevindlv'.split('');
+---
+<div class="intro" id="intro" aria-hidden="true">
+  <span class="intro-logo">{letters.map((c, i) => <span class="ch" style={`--i:${i}`}>{c}</span>)}</span>
+</div>
+<style>
+  .intro {
+    position: fixed; inset: 0; z-index: 60;
+    background: var(--bg);
+    display: none;
+    place-items: center;
+    transition: transform 0.6s var(--ease);
+  }
+  :global(.intro-play) .intro { display: grid; }
+  .intro.out { transform: translateY(-100%); }
+  .intro-logo {
+    background: var(--butter); color: var(--bg);
+    font-weight: 800; font-size: clamp(2.2rem, 8vw, 4.5rem);
+    padding: 0.25em 0.7em; border-radius: 18px;
+    transform: rotate(-2deg); letter-spacing: -0.02em;
+  }
+  .ch { display: inline-block; opacity: 0; transform: translateY(0.5em) scale(1.35); }
+  :global(.intro-play) .ch {
+    animation: intro-ch 0.45s var(--ease-pop) forwards;
+    animation-delay: calc(var(--i) * 70ms + 150ms);
+  }
+  @keyframes intro-ch { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .intro { display: none !important; } }
+</style>
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const intro = document.getElementById('intro');
+  const root = document.documentElement;
+  const seen = sessionStorage.getItem('introSeen');
+  if (!reduced && !seen && intro) {
+    root.classList.add('intro-play');
+    sessionStorage.setItem('introSeen', '1');
+    const finish = () => {
+      intro.classList.add('out');
+      root.classList.add('ready');
+      setTimeout(() => intro.remove(), 700);
+    };
+    const t = setTimeout(finish, 1700);
+    intro.addEventListener('click', () => { clearTimeout(t); finish(); });
+  } else {
+    intro?.remove();
+    root.classList.add('ready');
+  }
+</script>

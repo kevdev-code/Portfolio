@@ -62,8 +62,8 @@ section { padding: clamp(3.5rem, 9vh, 6.5rem) 0; border-top: 1px solid var(--bor
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
-  .js .reveal, .js .hero h1 .word, .js .fade-up, .js .reveal-stagger .sticker, .js .float { opacity: 1 !important; transform: none !important; }
-  .js .squiggle path { stroke-dashoffset: 0 !important; }
+  .js .reveal, .ready .hero h1 .word, .ready .fade-up, .js .reveal-stagger .sticker, .ready .float { opacity: 1 !important; transform: none !important; }
+  .ready .squiggle path { stroke-dashoffset: 0 !important; }
   .dots { mask-image: none; -webkit-mask-image: none; opacity: 0.25; }
   .marquee-track { animation: none !important; }
 }
