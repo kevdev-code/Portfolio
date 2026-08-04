@@ -1,0 +1,18 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="wrap foot">
+    <span>© {year} Kevin López · {t('footer.made')}</span><!-- KEVIN-TODO nombre real -->
+    <span>{t('footer.member')} <a href="https://www.thedevnest.com/">the dev nest</a></span>
+  </div>
+</footer>
+<style>
+  footer { border-top: 1px solid var(--border); padding: 2rem 0; }
+  .foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; color: var(--muted); font-family: var(--mono); font-size: 0.78rem; }
+  footer a { color: var(--mint); text-decoration: none; }
+</style>
