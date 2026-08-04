@@ -40,7 +40,9 @@ const site = Astro.site ?? new URL('http://localhost:4321');
     <script>
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const io = new IntersectionObserver(
-        (es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')),
+        // bidireccional: al salir del viewport la seccion vuelve a su estado oculto
+        // y se re-anima cada vez que reingresa (scroll arriba o abajo)
+        (es) => es.forEach((e) => e.target.classList.toggle('in', e.isIntersecting)),
         { threshold: 0.12 },
       );
       document.querySelectorAll('.reveal, .reveal-stagger').forEach((el) => io.observe(el));
