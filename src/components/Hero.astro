@@ -1,0 +1,104 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<section class="hero" id="top">
+  <span class="float f1" aria-hidden="true"><span class="inner">{t('float.fullstack')}</span></span>
+  <span class="float f2" aria-hidden="true"><span class="inner">{t('float.webmobile')}</span></span>
+  <span class="float f3" aria-hidden="true"><span class="inner">{t('float.nest')}</span></span>
+  <span class="avail"><span class="dot"></span> {t('hero.avail')}</span>
+  <h1 id="headline">
+    {t('hero.h1.pre')} <span class="hl hl-mint">{t('hero.h1.web')}</span> {t('hero.h1.and')}
+    <span class="hl hl-coral">{t('hero.h1.mobile')}</span> {t('hero.h1.post')}
+    <span class="hl hl-butter">{t('hero.h1.alive')}</span>
+  </h1>
+  <svg class="squiggle" width="170" height="14" viewBox="0 0 180 14" fill="none" aria-hidden="true">
+    <path d="M2 8 Q 15 2, 30 8 T 60 8 T 90 8 T 120 8 T 150 8 T 178 8" stroke="oklch(0.58 0.16 45)" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+  <p class="intro fade-up">
+    {t('hero.intro.pre')} <a href="https://www.thedevnest.com/">The Dev Nest</a>. {t('hero.intro.post')}
+  </p>
+  <div class="cta-row fade-up">
+    <a class="btn btn-solid magnetic" href="#contact">{t('hero.cta.talk')}</a>
+    <a class="btn btn-line magnetic" href="#work">{t('hero.cta.work')}</a>
+  </div>
+</section>
+<style>
+  .hero { padding: clamp(5rem, 15vh, 9rem) 0 clamp(4rem, 9vh, 6rem); position: relative; }
+  .avail {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-family: var(--mono); font-size: 0.8rem; color: var(--mint);
+    border: 1px solid oklch(0.80 0.13 160 / 0.35); background: var(--mint-dim);
+    padding: 0.35rem 0.9rem; border-radius: 99px; margin-bottom: 1.8rem;
+  }
+  .avail .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); }
+  :global(.js) .avail .dot { animation: pulse 2.2s ease-in-out infinite; }
+  .hero h1 {
+    font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 800;
+    line-height: 1.08; letter-spacing: -0.03em; text-wrap: balance; max-width: 17ch;
+  }
+  .hero h1 .word { display: inline-block; }
+  :global(.js) .hero h1 .word {
+    opacity: 0; transform: translateY(0.5em) rotate(3deg);
+    animation: word-in 0.65s var(--ease) forwards;
+    animation-delay: calc(var(--i) * 60ms);
+  }
+  .hl { display: inline-block; padding: 0 0.16em; border-radius: 9px; transition: transform 0.3s var(--ease-pop); }
+  .hl-mint { background: var(--mint); color: var(--bg); transform: rotate(-1.2deg); }
+  .hl-coral { background: var(--coral); color: #fff; transform: rotate(1.2deg); }
+  .hl-butter { background: var(--butter); color: var(--bg); transform: rotate(-1deg); }
+  .hl:hover { transform: rotate(0) scale(1.05); }
+  .squiggle { display: block; margin-top: 0.9rem; }
+  .squiggle path { stroke-dasharray: 220; stroke-dashoffset: 0; }
+  :global(.js) .squiggle path { stroke-dashoffset: 220; animation: draw 0.9s var(--ease) 0.8s forwards; }
+  .hero p.intro { margin-top: 1.6rem; color: var(--muted); font-size: 1.1rem; max-width: 48ch; }
+  :global(.js) .fade-up { opacity: 0; animation: word-in 0.7s var(--ease) forwards; }
+  :global(.js) p.intro.fade-up { animation-delay: 0.7s; }
+  :global(.js) .cta-row.fade-up { animation-delay: 0.85s; }
+  .cta-row { margin-top: 2.6rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .float { position: absolute; font-weight: 700; padding: 0.42rem 1rem; border-radius: 99px; font-size: 0.9rem; will-change: transform; cursor: default; }
+  .float .inner { display: inline-block; }
+  :global(.js) .float { opacity: 0; animation: sticker-in 0.55s var(--ease-pop) forwards; }
+  :global(.js) .float .inner { animation: drift 5.4s ease-in-out infinite alternate; }
+  .f1 { top: 22%; right: 16%; background: var(--butter); color: var(--bg); rotate: -7deg; animation-delay: 1s !important; }
+  .f2 { top: 48%; right: 5%; background: var(--mint); color: var(--bg); rotate: 5deg; animation-delay: 1.15s !important; }
+  .f3 { top: 74%; right: 22%; background: var(--surface); color: var(--text); border: 1px solid var(--line, var(--border)); rotate: 3deg; animation-delay: 1.3s !important; }
+  .f2 .inner { animation-duration: 6.6s !important; }
+  .f3 .inner { animation-duration: 7.4s !important; }
+  @media (max-width: 980px) { .float { display: none; } }
+</style>
+<script>
+  // titular palabra por palabra conservando resaltados — portado verbatim del mockup G
+  const h = document.getElementById('headline') as HTMLElement;
+  [...h.childNodes].forEach((child) => {
+    if (child.nodeType === 3) {
+      const frag = document.createDocumentFragment();
+      child.textContent!.split(/(\s+)/).forEach((part) => {
+        if (/^\s+$/.test(part) || part === '') { frag.appendChild(document.createTextNode(part)); }
+        else { const s = document.createElement('span'); s.className = 'word'; s.textContent = part; frag.appendChild(s); }
+      });
+      h.replaceChild(frag, child);
+    } else if ((child as Element).classList && (child as Element).classList.contains('hl')) {
+      (child as Element).classList.add('word');
+    }
+  });
+  h.querySelectorAll('.word').forEach((w, i) => (w as HTMLElement).style.setProperty('--i', String(i)));
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // parallax de stickers del hero
+    const floats = [...document.querySelectorAll<HTMLElement>('.float')];
+    let mx = 0, my = 0, cx = 0, cy = 0;
+    addEventListener('mousemove', (e) => {
+      mx = (e.clientX / innerWidth - 0.5); my = (e.clientY / innerHeight - 0.5);
+    }, { passive: true });
+    const depths = [16, 24, 12];
+    (function loop() {
+      cx += (mx - cx) * 0.06; cy += (my - cy) * 0.06;
+      floats.forEach((f, i) => { f.style.translate = `${cx * depths[i]}px ${cy * depths[i]}px`; });
+      requestAnimationFrame(loop);
+    })();
+  }
+</script>
