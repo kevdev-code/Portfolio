@@ -39,8 +39,8 @@ const t = useTranslations(lang);
     font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 800;
     line-height: 1.08; letter-spacing: -0.03em; text-wrap: balance; max-width: 17ch;
   }
-  .hero h1 .word { display: inline-block; }
-  :global(.js) .hero h1 .word {
+  .hero h1 :global(.word) { display: inline-block; }
+  :global(.js .hero h1 .word) {
     opacity: 0; transform: translateY(0.5em) rotate(3deg);
     animation: word-in 0.65s var(--ease) forwards;
     animation-delay: calc(var(--i) * 60ms);
