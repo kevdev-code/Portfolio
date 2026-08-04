@@ -40,11 +40,6 @@ const t = useTranslations(lang);
     line-height: 1.08; letter-spacing: -0.03em; text-wrap: balance; max-width: 17ch;
   }
   .hero h1 :global(.word) { display: inline-block; }
-  :global(.ready .hero h1 .word) {
-    opacity: 0; transform: translateY(0.5em) rotate(3deg);
-    animation: word-in 0.65s var(--ease) forwards;
-    animation-delay: calc(var(--i) * 60ms);
-  }
   .hl { display: inline-block; padding: 0 0.16em; border-radius: 9px; transition: transform 0.3s var(--ease-pop); }
   .hl-mint { background: var(--mint); color: var(--bg); transform: rotate(-1.2deg); }
   .hl-coral { background: var(--coral); color: #fff; transform: rotate(1.2deg); }
@@ -87,6 +82,48 @@ const t = useTranslations(lang);
     }
   });
   h.querySelectorAll('.word').forEach((w, i) => (w as HTMLElement).style.setProperty('--i', String(i)));
+
+  // titular con efecto scramble de caracteres — resuelve glifo por glifo hacia el texto real
+  const GLYPHS = '#*+=<>/\\|▚▞░▒█{}[]()!?';
+  const reducedS = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function scrambleWord(el: HTMLElement, delay: number) {
+    const finalText = el.dataset.final ?? '';
+    const chars = finalText.split('');
+    let frame = 0;
+    const settleAt = chars.map((_, i) => 6 + i * 3); // frames after which char i is final
+    const tick = () => {
+      let out = '';
+      let done = true;
+      chars.forEach((c, i) => {
+        if (c === ' ') { out += c; return; }
+        if (frame >= settleAt[i]) { out += c; }
+        else { out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; done = false; }
+      });
+      el.textContent = out;
+      frame++;
+      if (!done) requestAnimationFrame(tick);
+      else { el.style.minWidth = ''; }
+    };
+    setTimeout(() => requestAnimationFrame(tick), delay);
+  }
+  function startScramble() {
+    const words = [...document.querySelectorAll<HTMLElement>('#headline .word')];
+    if (reducedS) return; // headline already fully visible, leave it
+    words.forEach((w) => {
+      // reserve final width to avoid layout shift while scrambling (proportional font)
+      const width = w.getBoundingClientRect().width;
+      w.style.minWidth = width + 'px';
+      const finalText = w.textContent ?? '';
+      w.dataset.final = finalText;
+      // synchronous first pass: whole headline shows glyphs instantly, no flash of real text
+      w.textContent = finalText.split('').map((c) => (c === ' ' ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])).join('');
+    });
+    words.forEach((w, i) => scrambleWord(w, i * 140));
+  }
+  if (document.documentElement.classList.contains('ready')) startScramble();
+  else new MutationObserver((_, obs) => {
+    if (document.documentElement.classList.contains('ready')) { obs.disconnect(); startScramble(); }
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     // parallax de stickers del hero
