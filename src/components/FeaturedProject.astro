@@ -21,8 +21,8 @@ const alt = lang === 'en' ? d.imageAlt_en : d.imageAlt_es;
       <p>{tagline}</p>
       <div class="chips">{d.stack.map((s) => <span class="chip">{s}</span>)}</div>
       <div class="proj-links">
-        {d.url && <a href={d.url}>{t('work.demo')}</a>}
-        {d.repo && <a href={d.repo}>{t('work.code')}</a>}
+        {d.url && <a href={d.url} target="_blank" rel="noopener noreferrer">{t('work.demo')}</a>}
+        {d.repo && <a href={d.repo} target="_blank" rel="noopener noreferrer">{t('work.code')}</a>}
       </div>
     </div>
     <div class="proj-shot"><Image src={d.image} alt={alt} /></div>
