@@ -31,4 +31,8 @@ const t = useTranslations(lang);
   .about p { color: var(--muted); font-size: 1.12rem; max-width: 62ch; }
   .about strong { color: var(--text); }
   .about a { color: var(--mint); text-decoration: none; }
+  :global(.js .reveal .about-photo) { opacity: 0; transform: translateX(-26px); transition: opacity 0.8s var(--ease) 0.15s, transform 0.8s var(--ease) 0.15s; }
+  :global(.js .reveal.in .about-photo) { opacity: 1; transform: none; }
+  :global(.js .reveal .about-grid p) { opacity: 0; transform: translateY(18px); transition: opacity 0.8s var(--ease) 0.35s, transform 0.8s var(--ease) 0.35s; }
+  :global(.js .reveal.in .about-grid p) { opacity: 1; transform: none; }
 </style>

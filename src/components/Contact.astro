@@ -35,4 +35,11 @@ const t = useTranslations(lang);
   .socials a:nth-child(1):hover { background: var(--mint); color: var(--bg); transform: rotate(-2deg) translateY(-2px); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); }
   .socials a:nth-child(2):hover { background: var(--butter); color: var(--bg); transform: rotate(2deg) translateY(-2px); box-shadow: 3px 3px 0 oklch(0.45 0.06 95); }
   .socials a:nth-child(3):hover { background: var(--coral); color: #fff; transform: rotate(-1.5deg) translateY(-2px); box-shadow: 3px 3px 0 oklch(0.35 0.1 45); }
+  :global(.js .reveal .mail) { clip-path: inset(0 100% 0 0); transition: clip-path 0.9s var(--ease) 0.25s; }
+  :global(.js .reveal.in .mail) { clip-path: inset(0 0 0 0); }
+  :global(.js .reveal .socials a) { opacity: 0; transition: opacity 0.55s var(--ease-pop); }
+  :global(.js .reveal .socials a:nth-child(1)) { transition-delay: 0.55s; }
+  :global(.js .reveal .socials a:nth-child(2)) { transition-delay: 0.67s; }
+  :global(.js .reveal .socials a:nth-child(3)) { transition-delay: 0.79s; }
+  :global(.js .reveal.in .socials a) { opacity: 1; }
 </style>

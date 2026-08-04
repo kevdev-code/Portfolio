@@ -65,6 +65,10 @@ const alt = lang === 'en' ? d.imageAlt_en : d.imageAlt_es;
   }
   .reveal.in .proj-shot img { transform: rotate(1deg); }
   .proj:hover .proj-shot img { transform: rotate(0); }
+  :global(.js .reveal .proj-info) { opacity: 0; transform: translateX(-34px); transition: opacity 0.85s var(--ease) 0.2s, transform 0.85s var(--ease) 0.2s; }
+  :global(.js .reveal.in .proj-info) { opacity: 1; transform: none; }
+  :global(.js .reveal .proj-shot) { opacity: 0; transform: translateX(34px) rotate(4deg); transition: opacity 0.85s var(--ease) 0.3s, transform 0.85s var(--ease) 0.3s; }
+  :global(.js .reveal.in .proj-shot) { opacity: 1; transform: none; }
 </style>
 <script>
   document.querySelectorAll('.proj').forEach((el) => {
