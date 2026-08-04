@@ -17,13 +17,13 @@ const t = useTranslations(lang);
   section.about { border-top: 0; }
   .about-grid { display: grid; grid-template-columns: 230px 1fr; gap: 2.2rem; align-items: start; }
   .about-photo {
-    width: 100%; height: auto; border-radius: 18px;
-    border: 1px solid var(--border);
-    transform: rotate(-2deg);
-    box-shadow: 6px 6px 0 var(--mint);
-    transition: transform 0.3s var(--ease-pop), box-shadow 0.3s var(--ease-pop);
+    width: 100%; height: auto;
+    aspect-ratio: 1 / 1.05;
+    object-fit: cover; object-position: top;
+    border-radius: 18px 18px 0 0;
+    mask-image: linear-gradient(to bottom, black 45%, transparent 96%);
+    -webkit-mask-image: linear-gradient(to bottom, black 45%, transparent 96%);
   }
-  .about-photo:hover { transform: rotate(0) scale(1.02); box-shadow: 8px 9px 0 var(--mint); }
   @media (max-width: 700px) {
     .about-grid { grid-template-columns: 1fr; }
     .about-photo { max-width: 230px; }
