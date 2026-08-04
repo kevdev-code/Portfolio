@@ -1,0 +1,38 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+import { skills } from '../data/skills';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<section class="skills" id="skills">
+  <div class="sec-head reveal"><h2>{t('stack.title')}</h2><span class="meta">{t('stack.meta')}</span></div>
+  <h3>{t('stack.web')}</h3>
+  <div class="stickers reveal-stagger">
+    {skills.web.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
+  </div>
+  <h3>{t('stack.mobile')}</h3>
+  <div class="stickers reveal-stagger">
+    {skills.mobile.map((s, i) => <span class="sticker" style={`--i:${i}`}>{s}</span>)}
+  </div>
+</section>
+<style>
+  .stickers { display: flex; flex-wrap: wrap; gap: 1rem; max-width: 780px; }
+  .sticker {
+    border-radius: 99px; padding: 0.6rem 1.25rem; font-weight: 700; font-size: 0.98rem;
+    cursor: default; will-change: transform;
+    transition: transform 0.3s var(--ease-pop), box-shadow 0.3s var(--ease-pop);
+  }
+  :global(.js .reveal-stagger .sticker) { opacity: 0; transform: scale(0.5); transition: opacity 0.5s var(--ease-pop), transform 0.5s var(--ease-pop); transition-delay: calc(var(--i) * 55ms); }
+  :global(.js .reveal-stagger.in .sticker) { opacity: 1; }
+  .sticker:nth-child(4n)   { background: var(--butter); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.45 0.06 95); }
+  .sticker:nth-child(4n+1) { background: var(--mint); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); }
+  .sticker:nth-child(4n+2) { background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); }
+  .sticker:nth-child(4n+3) { background: var(--coral); color: #fff; box-shadow: 3px 3px 0 oklch(0.35 0.1 45); }
+  :global(.js .reveal-stagger.in .sticker:nth-child(4n))   { transform: rotate(-3deg) scale(1); }
+  :global(.js .reveal-stagger.in .sticker:nth-child(4n+1)) { transform: rotate(2deg) scale(1); }
+  :global(.js .reveal-stagger.in .sticker:nth-child(4n+2)) { transform: rotate(-1.5deg) scale(1); }
+  :global(.js .reveal-stagger.in .sticker:nth-child(4n+3)) { transform: rotate(3deg) scale(1); }
+  .sticker:hover { transform: rotate(0) scale(1.12) !important; }
+  .skills h3 { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); margin: 1.8rem 0 1rem; }
+</style>

@@ -1,0 +1,15 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<section class="about reveal" id="about">
+  <div class="sec-head"><h2>{t('about.title')}</h2><span class="meta">{t('about.meta')}</span></div>
+  <p><strong>{t('about.body.strong')}</strong> {t('about.body.rest')} <strong>{t('about.body.strong2')}</strong>.</p>
+</section>
+<style>
+  .about p { color: var(--muted); font-size: 1.12rem; max-width: 62ch; }
+  .about strong { color: var(--text); }
+  .about a { color: var(--mint); text-decoration: none; }
+</style>
