@@ -1,59 +1,68 @@
 # Design
 
-Sistema visual del portafolio. Seed de marca: `oklch(0.550 0.119 160.0)` (seed-158). Registro: brand.
+Sistema visual del portafolio. Dirección elegida por el autor tras exploración de 8 mockups: **"Precisión con chispa"** (mockup G). Referencia viva: [`mockups/g-hibrido-turbo.html`](mockups/g-hibrido-turbo.html). Registro: brand. Seed de marca original: `oklch(0.550 0.119 160.0)` (seed-158, hue 160 conservado en todo el sistema).
 
 ## Mood
 
-"Taller-invernadero": blanco puro de fondo, verde musgo que carga toda la identidad, chispazos naranja coral. Fresco, hecho a mano, seguro de sí mismo.
+"Taller de noche": oscuro de precisión con tinte verde de marca, donde los stickers brillantes (menta, mantequilla, coral) son los golpes de luz. La base es orden de ingeniero (retícula, líneas finas, etiquetas mono); el juego está dosificado en lugares asignados, nunca regado.
 
 ## Color
 
-Estrategia: **Committed** — el verde primario carga 30–60% de la superficie (hero, secciones enteras, botones). El coral aparece solo en los momentos juguetones.
+Estrategia: base **restrained** (oscuro + menta contenida) con acentos **full-palette** (menta, mantequilla, coral) reservados para los momentos juguetones.
 
 ```css
 :root {
-  --bg:      oklch(1.000 0.000 0);     /* blanco puro, sin tinte */
-  --surface: oklch(0.960 0.010 160);   /* paneles y tarjetas */
-  --ink:     oklch(0.220 0.020 160);   /* texto cuerpo, ≥7:1 vs bg */
-  --muted:   oklch(0.480 0.020 160);   /* texto secundario, ≥4.5:1 vs bg */
-  --primary: oklch(0.550 0.130 160);   /* verde musgo — identidad */
-  --accent:  oklch(0.680 0.170 45);    /* coral — juego, badges, hovers */
+  --bg:      oklch(0.14 0.015 160);   /* oscuro de precisión, tinte de marca */
+  --surface: oklch(0.18 0.02 160);    /* paneles, tarjetas, marquee */
+  --border:  oklch(0.30 0.02 160);    /* líneas finas de sección */
+  --text:    oklch(0.93 0.005 160);   /* cuerpo, ≥7:1 vs bg */
+  --muted:   oklch(0.64 0.015 160);   /* secundario, ≥4.5:1 vs bg */
+  --mint:    oklch(0.80 0.13 160);    /* primario: CTAs, links, glows */
+  --coral:   oklch(0.58 0.16 45);     /* juego: squiggle, sombras duras, subrayado mail */
+  --butter:  oklch(0.88 0.11 95);     /* juego: logo sticker, resaltado, flotantes */
 }
 ```
 
 Reglas:
 
-- Texto sobre rellenos `--primary` o `--accent`: **blanco**, nunca oscuro (Helmholtz-Kohlrausch).
-- El coral nunca es color de texto largo; solo acentos cortos (badges, subrayados, hovers).
-- Nada de beige/crema. Nada de fondo oscuro global.
+- Fills pálidos (menta L0.80, mantequilla L0.88): **texto oscuro** (`--bg`). Fill coral (L0.58, saturado): **texto blanco**. Nunca texto oscuro sobre coral.
+- Sombras duras de color (`3-7px offset, 0 blur`) en stickers y botones; nunca sombras negras difusas en elementos juguetones.
+- El coral y la mantequilla no son colores de texto largo; solo acentos cortos.
+- Nada de beige de fondo, nada de negro puro sin tinte, nada de verde neón terminal.
 
 ## Typography
 
-Una sola familia con contraste fuerte de peso: **Bricolage Grotesque** (variable, vía `@fontsource-variable/bricolage-grotesque`).
+Par en eje de contraste: grotesca con carácter + monoespaciada técnica.
 
-- Display (hero): peso 800, `clamp(2.5rem, 8vw, 5.5rem)`, letter-spacing ≥ -0.03em, `text-wrap: balance`.
-- Headings de sección: peso 700, escala modular ratio ≥1.25.
-- Cuerpo: peso 400, 16–18px, líneas de 65–75ch máximo, `text-wrap: pretty`.
-- Sin monospace decorativo, sin all-caps en cuerpo.
+- **Bricolage Grotesque** (variable): display y cuerpo. Hero peso 800, `clamp(2.6rem, 7vw, 5rem)`, letter-spacing -0.03em, `text-wrap: balance`. Cuerpo 400, 16-18px, máx 65-75ch.
+- **JetBrains Mono** (400/600): voz técnica en dosis pequeñas: nav, etiquetas de sección (`// quién soy`), metadatos, chips, fechas, footer, badge de disponibilidad.
+- Headings de sección: 800, escala modular ratio ≥1.25.
 
 ## Layout
 
-- One-page, scroll largo, una idea dominante por viewport.
-- Espaciado fluido con `clamp()`; separaciones generosas entre secciones, agrupaciones internas apretadas.
-- Composición asimétrica en hero y proyecto destacado; romper la retícula con intención, no por sistema.
-- Sin grid de tarjetas idénticas; sin eyebrows uppercase repetidos por sección; sin bordes laterales de acento.
+- One-page, contenedor `max-width: 1060px`, alineación izquierda (asimétrica, no centrada).
+- Secciones separadas por `border-top: 1px` fino; cabecera de sección = h2 + etiqueta mono al lado.
+- Orden: Hero → marquee → Sobre mí → Stack → Proyecto destacado → Experiencia → Contacto → footer.
+- Fondo global: retícula de puntos revelada solo alrededor del cursor (spotlight con `mask-image`) + grano de impresión al 3.5%.
 
 ## Components
 
-- **Botón primario:** relleno `--primary`, texto blanco, radio moderado, hover con levantamiento sutil.
-- **Stickers de skills:** píldoras con rotación ligera (−3° a 3°), borde `--ink`, fondo `--surface` o `--accent`, "pop" (scale + rotación a 0) al hover.
-- **Toggle ES/EN:** interruptor visible y juguetón en la navegación; conserva la sección actual al cambiar de idioma.
-- **Links de contacto:** botones grandes directos (email, WhatsApp, GitHub, LinkedIn), sin formulario.
+- **Badge disponibilidad:** píldora mono menta con punto pulsante, arriba del titular.
+- **Resaltados de marcador:** 2-3 palabras del titular con fondo menta/coral/mantequilla y rotación ±1.5°; se enderezan al hover.
+- **Squiggle:** subrayado ondulado coral (SVG) que se dibuja al cargar.
+- **Stickers flotantes del hero:** 3 píldoras (mantequilla/menta/surface) con deriva senoidal permanente y parallax de profundidad al mouse; ocultos <980px.
+- **Marquee:** franja inclinada -1° con términos en mono y separadores ✦ alternando coral/mantequilla; pausa al hover; estática con reduced-motion.
+- **Stickers de stack:** píldoras rotadas con sombra dura de color, pop en cascada (stagger 55ms) al entrar en viewport. Solo en la sección Stack.
+- **Panel de proyecto:** borde fino, glow radial interior que sigue al cursor, captura con rotación 2.5° que se endereza al revelarse y al hover.
+- **Botones:** primario menta con sombra dura coral; magnéticos (siguen al cursor ≤6px, retorno expo-out).
+- **Experiencia:** lista limpia de dos columnas (fecha mono / contenido), separadores finos.
+- **Contacto:** correo gigante con subrayado coral animado; links sociales píldora que se pintan cada uno de un color distinto al hover (menta/mantequilla/coral) con ladeo de sticker.
+- **Toggle ES/EN:** switch mono compacto en la nav; conserva la sección visible al cambiar.
 
 ## Motion
 
-- Una coreografía de entrada en el hero (typographic reveal escalonado). El resto: reveals discretos con IntersectionObserver sobre contenido ya visible por defecto.
-- Curvas ease-out exponenciales (quart/expo). Sin bounce, sin elastic.
-- Micro-interacciones: stickers, palabras interactivas del hero (tilt + cambio a coral al hover), toggle de idioma.
-- `prefers-reduced-motion: reduce` → crossfade o instantáneo en todo.
-- CSS + IntersectionObserver; sin librería de animación salvo necesidad demostrada.
+- Entrada del hero: titular palabra por palabra (translateY + rotación que se asienta, stagger 60ms), luego intro y CTAs (fade-up), squiggle dibujándose, stickers brotando en secuencia.
+- Curvas: ease-out exponencial (`cubic-bezier(0.22,1,0.36,1)` general, `cubic-bezier(0.16,1,0.3,1)` para pops). **Prohibido bounce/elastic.**
+- Reveals de scroll con IntersectionObserver sobre contenido visible por defecto (funciona sin JS).
+- `prefers-reduced-motion: reduce` → todo instantáneo, retícula estática, marquee detenido.
+- CSS + vanilla JS; sin librería de animación salvo necesidad demostrada.

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opción E — Precisión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(0.14 0.015 160);
+    --surface: oklch(0.18 0.02 160);
+    --border: oklch(0.30 0.02 160);
+    --text: oklch(0.93 0.005 160);
+    --muted: oklch(0.64 0.015 160);
+    --mint: oklch(0.80 0.13 160);
+    --mint-dim: oklch(0.80 0.13 160 / 0.14);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --mono: "JetBrains Mono", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Bricolage Grotesque", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    overflow-x: hidden;
+  }
+  /* retícula de puntos con spotlight que sigue al cursor */
+  .dots {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(oklch(0.35 0.03 160) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(340px circle at var(--sx, 50%) var(--sy, 30%), black 0%, transparent 100%);
+    -webkit-mask-image: radial-gradient(340px circle at var(--sx, 50%) var(--sy, 30%), black 0%, transparent 100%);
+  }
+  main, header, footer { position: relative; z-index: 1; }
+  .tag-variant {
+    position: fixed; bottom: 1rem; right: 1rem; z-index: 50;
+    background: var(--mint); color: var(--bg); font-weight: 700; font-size: 0.8rem;
+    padding: 0.5rem 0.9rem; border-radius: 99px;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 3rem); }
+
+  header {
+    position: sticky; top: 0; z-index: 30;
+    background: oklch(0.14 0.015 160 / 0.9);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-in { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
+  .logo { font-weight: 800; font-size: 1.1rem; text-decoration: none; color: var(--text); }
+  .logo em { font-style: normal; color: var(--mint); }
+  nav { display: flex; gap: 1.6rem; align-items: center; }
+  nav > a { color: var(--muted); text-decoration: none; font-family: var(--mono); font-size: 0.82rem; transition: color 0.25s var(--ease); }
+  nav > a:hover { color: var(--mint); }
+  .lang { font-family: var(--mono); font-size: 0.78rem; border: 1px solid var(--border); border-radius: 8px; padding: 0.25rem 0.3rem; display: flex; gap: 0.15rem; cursor: pointer; }
+  .lang b { background: var(--text); color: var(--bg); border-radius: 5px; padding: 0.05rem 0.5rem; }
+  .lang i { font-style: normal; padding: 0.05rem 0.5rem; color: var(--muted); }
+
+  /* ── HERO ── */
+  .hero { padding: clamp(5rem, 16vh, 10rem) 0 clamp(4rem, 10vh, 7rem); }
+  .avail {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-family: var(--mono); font-size: 0.8rem; color: var(--mint);
+    border: 1px solid oklch(0.80 0.13 160 / 0.35); background: var(--mint-dim);
+    padding: 0.35rem 0.9rem; border-radius: 99px; margin-bottom: 1.8rem;
+  }
+  .avail .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); }
+  .js .avail .dot { animation: pulse 2.2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .hero h1 {
+    font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 800;
+    line-height: 1.05; letter-spacing: -0.03em; text-wrap: balance; max-width: 16ch;
+  }
+  .hero h1 .dim { color: var(--muted); }
+  .roles { margin-top: 1.2rem; font-family: var(--mono); font-size: clamp(0.95rem, 1.6vw, 1.05rem); color: var(--mint); min-height: 1.6em; }
+  .roles .r { display: inline-block; }
+  .js .roles .r { transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), filter 0.4s var(--ease); }
+  .js .roles .r.out { opacity: 0; transform: translateY(-8px); filter: blur(4px); }
+  .hero p.intro { margin-top: 1.6rem; color: var(--muted); font-size: 1.1rem; max-width: 52ch; }
+  .hero p.intro a { color: var(--text); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--mint); }
+  .cta-row { margin-top: 2.6rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn {
+    text-decoration: none; font-weight: 600; font-size: 0.98rem;
+    padding: 0.8rem 1.6rem; border-radius: 10px;
+    transition: transform 0.25s var(--ease), background 0.25s var(--ease), border-color 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  .btn-solid { background: var(--text); color: var(--bg); }
+  .btn-solid:hover { background: var(--mint); transform: translateY(-2px); }
+  .btn-line { border: 1px solid var(--border); color: var(--text); }
+  .btn-line:hover { border-color: var(--mint); color: var(--mint); transform: translateY(-2px); }
+
+  /* ── SECCIONES ── */
+  section { padding: clamp(3.5rem, 9vh, 6.5rem) 0; border-top: 1px solid var(--border); }
+  .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 2rem; }
+  .sec-head h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); font-weight: 800; letter-spacing: -0.02em; }
+  .sec-head .meta { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+
+  .about p { color: var(--muted); font-size: 1.12rem; max-width: 62ch; }
+  .about strong { color: var(--text); }
+  .about a { color: var(--mint); text-decoration: none; }
+
+  /* stack: tiles con borde que responde al cursor */
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.8rem; }
+  .tile {
+    position: relative; border: 1px solid var(--border); border-radius: 12px;
+    background: var(--surface); padding: 1rem 1.1rem;
+    font-family: var(--mono); font-size: 0.88rem; color: var(--muted);
+    transition: color 0.3s var(--ease), transform 0.3s var(--ease), border-color 0.3s var(--ease);
+    overflow: hidden;
+  }
+  .tile::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(140px circle at var(--mx, 50%) var(--my, 50%), var(--mint-dim), transparent 70%);
+    transition: opacity 0.3s var(--ease);
+  }
+  .tile:hover { color: var(--text); border-color: oklch(0.80 0.13 160 / 0.5); transform: translateY(-3px); }
+  .tile:hover::before { opacity: 1; }
+  .tile small { display: block; font-size: 0.68rem; color: var(--muted); margin-top: 0.2rem; }
+
+  /* proyecto: panel ancho con glow perimetral al cursor */
+  .proj {
+    position: relative; border: 1px solid var(--border); border-radius: 18px;
+    background: var(--surface); overflow: hidden;
+    display: grid; grid-template-columns: 1.05fr 1fr; gap: 0;
+  }
+  @media (max-width: 800px) { .proj { grid-template-columns: 1fr; } }
+  .proj::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), oklch(0.80 0.13 160 / 0.08), transparent 70%);
+    transition: opacity 0.3s var(--ease);
+  }
+  .proj:hover::before { opacity: 1; }
+  .proj-info { padding: clamp(1.8rem, 4vw, 3rem); }
+  .proj-info .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--mint); margin-bottom: 0.8rem; }
+  .proj-info h3 { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800; letter-spacing: -0.02em; }
+  .proj-info p { color: var(--muted); margin-top: 0.9rem; max-width: 48ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 1.4rem 0 1.8rem; }
+  .chip { font-family: var(--mono); font-size: 0.75rem; padding: 0.28rem 0.7rem; border-radius: 7px; border: 1px solid var(--border); color: var(--muted); }
+  .proj-links { display: flex; gap: 1.2rem; }
+  .proj-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; border-bottom: 1px solid var(--mint); padding-bottom: 1px; }
+  .proj-links a:hover { color: var(--mint); }
+  .proj-shot { border-left: 1px solid var(--border); background: oklch(0.16 0.018 160); display: flex; align-items: center; padding: clamp(1.2rem, 3vw, 2.2rem); }
+  @media (max-width: 800px) { .proj-shot { border-left: 0; border-top: 1px solid var(--border); } }
+  .proj-shot svg { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); }
+
+  /* experiencia: lista limpia */
+  .xp { display: flex; flex-direction: column; }
+  .xp-row {
+    display: grid; grid-template-columns: 140px 1fr; gap: 1.5rem;
+    padding: 1.3rem 0; border-bottom: 1px solid var(--border);
+  }
+  .xp-row:last-child { border-bottom: 0; }
+  @media (max-width: 600px) { .xp-row { grid-template-columns: 1fr; gap: 0.3rem; } }
+  .xp-when { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); padding-top: 0.25rem; }
+  .xp-what strong { font-size: 1.05rem; }
+  .xp-what span { color: var(--mint); }
+  .xp-what p { color: var(--muted); font-size: 0.98rem; margin-top: 0.2rem; max-width: 58ch; }
+
+  /* contacto */
+  .contact p { color: var(--muted); font-size: 1.12rem; max-width: 52ch; margin-bottom: 2rem; }
+  .mail {
+    font-size: clamp(1.4rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em;
+    color: var(--text); text-decoration: none; position: relative; display: inline-block;
+  }
+  .mail::after {
+    content: ""; position: absolute; left: 0; right: 100%; bottom: -6px; height: 3px;
+    background: var(--mint); border-radius: 3px; transition: right 0.4s var(--ease);
+  }
+  .mail:hover::after { right: 0; }
+  .socials { margin-top: 2rem; display: flex; gap: 1.4rem; }
+  .socials a { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); text-decoration: none; transition: color 0.25s var(--ease); }
+  .socials a:hover { color: var(--mint); }
+
+  footer { border-top: 1px solid var(--border); padding: 2rem 0; }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; color: var(--muted); font-family: var(--mono); font-size: 0.78rem; }
+  footer a { color: var(--mint); text-decoration: none; }
+
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    .js .reveal { opacity: 1; transform: none; }
+    .dots { mask-image: none; -webkit-mask-image: none; opacity: 0.25; }
+  }
+</style>
+</head>
+<body>
+<div class="dots" aria-hidden="true"></div>
+<div class="tag-variant">Opción E · Precisión</div>
+<header>
+  <div class="wrap header-in">
+    <a class="logo" href="#">kevin<em>.</em>dev</a>
+    <nav>
+      <a href="#about">about</a>
+      <a href="#stack">stack</a>
+      <a href="#work">work</a>
+      <a href="#contact">contact</a>
+      <div class="lang"><b>ES</b><i>EN</i></div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" style="border-top:0">
+    <span class="avail"><span class="dot"></span> disponible para proyectos</span>
+    <h1>Kevin López<span class="dim">.</span><br><span class="dim">Construyo software que se siente bien.</span></h1>
+    <div class="roles" aria-live="polite"><span class="r">full-stack developer</span></div>
+    <p class="intro">Apps web y móviles de principio a fin: de la base de datos al último pixel. Miembro de <a href="https://www.thedevnest.com/">The Dev Nest</a>. Me obsesionan los detalles (espaciado, timing, feedback).</p>
+    <div class="cta-row">
+      <a class="btn btn-solid" href="#contact">Hablemos</a>
+      <a class="btn btn-line" href="#work">Ver mi trabajo</a>
+    </div>
+  </section>
+
+  <section class="about reveal" id="about">
+    <div class="sec-head"><h2>Sobre mí</h2><span class="meta">// quién soy</span></div>
+    <p><strong>Desarrollador full-stack de día y también de noche</strong> (el café ayuda). Construyo productos completos, rápidos y cuidados. Me tomo en serio que la interfaz confirme cada intención del usuario con <strong>movimiento sutil, nunca distracción</strong>.</p>
+  </section>
+
+  <section class="reveal" id="stack">
+    <div class="sec-head"><h2>Stack</h2><span class="meta">// con qué trabajo</span></div>
+    <div class="stack-grid">
+      <div class="tile">React<small>web</small></div>
+      <div class="tile">TypeScript<small>web</small></div>
+      <div class="tile">Node.js<small>backend</small></div>
+      <div class="tile">Astro<small>web</small></div>
+      <div class="tile">PostgreSQL<small>datos</small></div>
+      <div class="tile">React Native<small>móvil</small></div>
+      <div class="tile">Flutter<small>móvil</small></div>
+      <div class="tile">Expo<small>móvil</small></div>
+    </div>
+  </section>
+
+  <section class="reveal" id="work">
+    <div class="sec-head"><h2>Proyecto destacado</h2><span class="meta">// selected work</span></div>
+    <div class="proj">
+      <div class="proj-info">
+        <div class="meta">2026 · web app</div>
+        <h3>Proyecto Uno</h3>
+        <p>El problema: [una línea del problema real]. La solución: una app que lo resuelve sin drama, rápida y al grano.</p>
+        <div class="chips"><span class="chip">react</span><span class="chip">node</span><span class="chip">postgres</span></div>
+        <div class="proj-links"><a href="#">demo ↗</a><a href="#">código ↗</a></div>
+      </div>
+      <div class="proj-shot">
+        <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Captura del proyecto destacado">
+          <rect width="480" height="320" fill="oklch(0.2 0.02 160)"/>
+          <rect width="480" height="36" fill="oklch(0.24 0.025 160)"/>
+          <circle cx="20" cy="18" r="6" fill="oklch(0.58 0.16 45)"/><circle cx="40" cy="18" r="6" fill="oklch(0.8 0.13 160)"/><circle cx="60" cy="18" r="6" fill="oklch(0.4 0.03 160)"/>
+          <rect x="30" y="70" width="200" height="22" rx="6" fill="oklch(0.85 0.02 160)"/>
+          <rect x="30" y="110" width="300" height="12" rx="6" fill="oklch(0.5 0.02 160)"/>
+          <rect x="30" y="132" width="260" height="12" rx="6" fill="oklch(0.5 0.02 160)"/>
+          <rect x="30" y="170" width="130" height="40" rx="10" fill="oklch(0.8 0.13 160)"/>
+          <rect x="290" y="70" width="160" height="180" rx="12" fill="oklch(0.28 0.03 160)"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal" id="xp">
+    <div class="sec-head"><h2>Experiencia</h2><span class="meta">// trayecto</span></div>
+    <div class="xp">
+      <div class="xp-row">
+        <div class="xp-when">2025 – hoy</div>
+        <div class="xp-what"><strong>Developer <span>@ The Dev Nest</span></strong><p>Desarrollo web y móvil en el estudio; proyectos de clientes de principio a fin.</p></div>
+      </div>
+      <div class="xp-row">
+        <div class="xp-when">2024 – hoy</div>
+        <div class="xp-what"><strong>Freelance <span>full-stack</span></strong><p>Apps a medida para clientes directos, web y móvil.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact reveal" id="contact">
+    <div class="sec-head"><h2>Contacto</h2><span class="meta">// hablemos</span></div>
+    <p>¿Tienes una idea o un proyecto? Escríbeme, respondo rápido.</p>
+    <a class="mail" href="mailto:hola@example.com">hola@kevin.dev</a>
+    <div class="socials">
+      <a href="#">github ↗</a><a href="#">linkedin ↗</a><a href="#">whatsapp ↗</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Kevin López · hecho a mano, sin plantillas</span>
+    <span>miembro de <a href="https://www.thedevnest.com/">the dev nest</a></span>
+  </div>
+</footer>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.documentElement.classList.replace('no-js', 'js');
+
+  const io = new IntersectionObserver((es) => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  if (!reduced) {
+    // spotlight de la retícula de puntos
+    const root = document.documentElement;
+    addEventListener('mousemove', (e) => {
+      root.style.setProperty('--sx', e.clientX + 'px');
+      root.style.setProperty('--sy', e.clientY + 'px');
+    }, { passive: true });
+
+    // glow local en tiles y panel de proyecto
+    document.querySelectorAll('.tile, .proj').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+
+    // rotación de roles con blur crossfade
+    const roles = ['full-stack developer', 'apps móviles', 'web que se siente viva', 'apis y backends'];
+    const el = document.querySelector('.roles .r');
+    let i = 0;
+    setInterval(() => {
+      el.classList.add('out');
+      setTimeout(() => {
+        i = (i + 1) % roles.length;
+        el.textContent = roles[i];
+        el.classList.remove('out');
+      }, 420);
+    }, 3200);
+  }
+</script>
+</body>
+</html>

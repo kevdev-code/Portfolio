@@ -14,7 +14,7 @@ One-page con cinco secciones, bilingüe EN/ES. **Fuera de alcance** (decisiones 
 
 ## Estrategia y visual
 
-Definidos en [`PRODUCT.md`](../../../PRODUCT.md) (registro brand, personalidad "juguetón, artesanal, seguro", anti-referencias, WCAG AA) y [`DESIGN.md`](../../../DESIGN.md) (paleta OKLCH verde musgo + coral sobre blanco puro, Bricolage Grotesque, motion contenido). Este spec no los duplica; ambos son fuente de verdad para la implementación.
+Definidos en [`PRODUCT.md`](../../../PRODUCT.md) (registro brand, personalidad "juguetón, artesanal, seguro", anti-referencias, WCAG AA) y [`DESIGN.md`](../../../DESIGN.md) (dirección "Precisión con chispa": oscuro de precisión con tinte verde, acentos menta/mantequilla/coral, Bricolage Grotesque + JetBrains Mono, sistema de motion definido). La referencia visual viva es `mockups/g-hibrido-turbo.html`, elegida por el autor entre 8 exploraciones. Este spec no los duplica; ambos son fuente de verdad para la implementación.
 
 ## Arquitectura
 
@@ -24,13 +24,15 @@ Definidos en [`PRODUCT.md`](../../../PRODUCT.md) (registro brand, personalidad "
 - **Fuentes:** `@fontsource-variable/bricolage-grotesque`, self-hosted (sin Google Fonts CDN).
 - **Assets:** capturas del proyecto en `src/assets/`, optimizadas con `astro:assets` (`<Image>`).
 
-## Secciones (orden del one-page)
+## Secciones (orden del one-page, según mockup G)
 
-1. **Hero:** nombre, titular grande con palabras interactivas (tilt + coral al hover), una línea de qué hace (full-stack web y móvil), CTA a contacto. Coreografía de entrada única.
-2. **Sobre mí:** párrafo breve con voz y humor, foto o avatar, mención de The Dev Nest con link.
-3. **Skills:** stickers rotados agrupados en dos familias — web y móvil. Sin barras de porcentaje, sin grid de íconos.
-4. **Proyecto destacado:** el más grande de la página. Nombre, problema→solución en 2-3 líneas, capturas reales, stack usado, links a demo/repo si existen.
-5. **Contacto:** botones directos grandes — email, WhatsApp, GitHub, LinkedIn — sin formulario. Footer con link a The Dev Nest.
+1. **Hero:** badge "disponible para proyectos", titular grande con palabras resaltadas estilo marcador, squiggle coral, stickers flotantes con parallax, intro breve, dos CTAs magnéticos. Coreografía de entrada única.
+2. **Marquee:** franja inclinada con términos del oficio (decorativa, `aria-hidden`).
+3. **Sobre mí:** párrafo breve con voz y humor, mención de The Dev Nest con link.
+4. **Stack:** stickers rotados con sombra dura de color, agrupados en web y móvil. Sin barras de porcentaje, sin grid de íconos.
+5. **Proyecto destacado:** panel con glow al cursor. Nombre, problema→solución en 2-3 líneas, capturas reales, stack, links a demo/repo si existen.
+6. **Experiencia:** lista limpia fecha/contenido (The Dev Nest, freelance).
+7. **Contacto:** correo gigante con subrayado animado + botones sociales directos (GitHub, LinkedIn, WhatsApp), sin formulario. Footer con link a The Dev Nest.
 
 Extra: página 404 con chiste (por idioma).
 
