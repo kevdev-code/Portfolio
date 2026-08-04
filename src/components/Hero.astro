@@ -35,7 +35,7 @@ const t = useTranslations(lang);
     font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 800;
     line-height: 1.08; letter-spacing: -0.03em; text-wrap: balance; max-width: 17ch;
   }
-  .hero h1 :global(.word) { display: inline-block; }
+  .hero h1 :global(.word) { display: inline-block; white-space: nowrap; }
   .hl { display: inline-block; padding: 0 0.16em; border-radius: 9px; transition: transform 0.3s var(--ease-pop); }
   .hl-mint { background: var(--mint); color: var(--bg); transform: rotate(-1.2deg); }
   .hl-coral { background: var(--coral); color: #fff; transform: rotate(1.2deg); }
@@ -80,9 +80,9 @@ const t = useTranslations(lang);
   h.querySelectorAll('.word').forEach((w, i) => (w as HTMLElement).style.setProperty('--i', String(i)));
 
   // titular con efecto scramble de caracteres — resuelve glifo por glifo hacia el texto real
-  const GLYPHS = '#*+=<>/\\|▚▞░▒█{}[]()!?';
+  const GLYPHS = '#*+=<>/\\{}[]()!?$%&';
   const reducedS = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function scrambleWord(el: HTMLElement, delay: number) {
+  function scrambleWord(el: HTMLElement, delay: number, onDone: () => void) {
     const finalText = el.dataset.final ?? '';
     const chars = finalText.split('');
     let frame = 0;
@@ -98,13 +98,23 @@ const t = useTranslations(lang);
       el.textContent = out;
       frame++;
       if (!done) requestAnimationFrame(tick);
-      else { el.style.width = ''; el.style.minWidth = ''; }
+      else { el.style.width = ''; el.style.minWidth = ''; onDone(); }
     };
     setTimeout(() => requestAnimationFrame(tick), delay);
   }
   function startScramble() {
     const words = [...document.querySelectorAll<HTMLElement>('#headline .word')];
     if (reducedS) return; // headline already fully visible, leave it
+    // belt-and-suspenders vertical lock: pin the headline's own box so settling
+    // glyph widths/heights (font now ready) can't nudge content below it
+    const h1 = document.getElementById('headline') as HTMLElement;
+    const hHeight = h1.getBoundingClientRect().height;
+    h1.style.minHeight = hHeight + 'px';
+    let wordsRemaining = words.length;
+    const onWordDone = () => {
+      wordsRemaining--;
+      if (wordsRemaining <= 0) h1.style.minHeight = '';
+    };
     words.forEach((w) => {
       // reserve final width to avoid layout shift while scrambling (proportional font);
       // fixed width (not just min-width) so wide fallback glyphs can't widen the word mid-scramble
@@ -115,11 +125,16 @@ const t = useTranslations(lang);
       // synchronous first pass: whole headline shows glyphs instantly, no flash of real text
       w.textContent = finalText.split('').map((c) => (c === ' ' ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])).join('');
     });
-    words.forEach((w, i) => scrambleWord(w, i * 140));
+    words.forEach((w, i) => scrambleWord(w, i * 140, onWordDone));
   }
-  if (document.documentElement.classList.contains('ready')) startScramble();
+  // gate on webfont readiness: measuring/pinning widths before Bricolage finishes loading
+  // would lock in fallback-font metrics, which then jump when the real font applies
+  function begin() {
+    document.fonts.ready.then(() => startScramble());
+  }
+  if (document.documentElement.classList.contains('ready')) begin();
   else new MutationObserver((_, obs) => {
-    if (document.documentElement.classList.contains('ready')) { obs.disconnect(); startScramble(); }
+    if (document.documentElement.classList.contains('ready')) { obs.disconnect(); begin(); }
   }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
