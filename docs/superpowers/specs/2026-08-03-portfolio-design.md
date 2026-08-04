@@ -18,7 +18,7 @@ Definidos en [`PRODUCT.md`](../../../PRODUCT.md) (registro brand, personalidad "
 
 ## Arquitectura
 
-- **Stack:** Astro 5, salida estática (`output: 'static'`). Sin frameworks de UI; islas solo si una interacción lo exige (el toggle de idioma y los hovers son CSS/JS vanilla).
+- **Stack:** Astro (v6, última estable), salida estática (default). Sin frameworks de UI; islas solo si una interacción lo exige (el toggle de idioma y los hovers son CSS/JS vanilla).
 - **i18n:** routing nativo de Astro. Inglés en `/` (default, alineado con The Dev Nest y clientes internacionales), español en `/es/`. Textos de UI en diccionarios TypeScript por idioma (`src/i18n/en.ts`, `src/i18n/es.ts`). `hreflang` alternates en el `<head>`. El toggle conserva la sección visible (ancla) al cambiar idioma.
 - **Contenido de proyectos:** content collection `projects` con un archivo por proyecto. Schema: `title`, `description_en`, `description_es`, `stack` (array), `images` (array), `url` (opcional), `repo` (opcional), `date`, `featured` (boolean). La sección "proyecto destacado" renderiza el `featured` más reciente. Agregar el proyecto #2 = crear un archivo Markdown.
 - **Fuentes:** `@fontsource-variable/bricolage-grotesque`, self-hosted (sin Google Fonts CDN).
