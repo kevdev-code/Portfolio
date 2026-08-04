@@ -86,14 +86,19 @@ const t = useTranslations(lang);
     const finalText = el.dataset.final ?? '';
     const chars = finalText.split('');
     let frame = 0;
-    const settleAt = chars.map((_, i) => 6 + i * 3); // frames after which char i is final
+    const settleAt = chars.map((_, i) => 10 + i * 5); // frames after which char i is final
+    const cur: string[] = chars.map((c) => (c === ' ' ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])); // keep current glyphs
     const tick = () => {
       let out = '';
       let done = true;
       chars.forEach((c, i) => {
         if (c === ' ') { out += c; return; }
         if (frame >= settleAt[i]) { out += c; }
-        else { out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; done = false; }
+        else {
+          if (frame % 3 === 0) { cur[i] = GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; }
+          out += cur[i];
+          done = false;
+        }
       });
       el.textContent = out;
       frame++;
@@ -136,7 +141,7 @@ const t = useTranslations(lang);
       wordsRemaining--;
       if (wordsRemaining <= 0) h1.style.minHeight = '';
     };
-    words.forEach((w, i) => scrambleWord(w, i * 140, onWordDone));
+    words.forEach((w, i) => scrambleWord(w, i * 170, onWordDone));
   }
   // gate on webfont readiness: measuring/pinning widths before Bricolage finishes loading
   // would lock in fallback-font metrics, which then jump when the real font applies
