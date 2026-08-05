@@ -13,11 +13,27 @@ const SPOTLIGHT_RADIUS = 520;
 const SPOTLIGHT_MAX_ALPHA = 1.0;
 const LERP = 0.18;
 const SWEEP_MS = 350; // left-to-right stagger window across the word
-const POP_MS = 320; // each dot's own r:1->2.5 pop transition
+const POP_MS = 320; // each dot's own pop-in transition
 const CLEAR_MS = 450; // fade lit dots back to the normal grid
 
+// Hand-defined 5x7 bitmap font — the only glyphs the egg needs ("kevindlv").
+// Sampling real text glyphs at 28px grid resolution lost thin strokes and
+// read as noise; a hand-tuned bitmap guarantees every letter is legible.
+const FONT_W = 5;
+const FONT_H = 7;
+const FONT: Record<string, string[]> = {
+  k: ['10001', '10010', '10100', '11000', '10100', '10010', '10001'],
+  e: ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+  v: ['10001', '10001', '10001', '10001', '10001', '01010', '00100'],
+  i: ['01110', '00100', '00100', '00100', '00100', '00100', '01110'],
+  n: ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
+  d: ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
+  l: ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
+};
+const LETTER_GAP = 1; // columns of blank space between letters
+
 interface Dot { x: number; y: number }
-interface LitDot { delay: number }
+interface WordDot { x: number; y: number; delay: number }
 
 const canvas = document.getElementById('dotfield') as HTMLCanvasElement | null;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -35,7 +51,8 @@ let curX = mouseX;
 let curY = mouseY;
 let rafId: number | null = null;
 
-let litDots: Map<number, LitDot> = new Map();
+let wordDots: WordDot[] = [];
+let wordRadius = 2.5;
 let wordPhase: 'idle' | 'popping' | 'clearing' = 'idle';
 let phaseStart = 0;
 let resolveDraw: (() => void) | null = null;
@@ -71,32 +88,28 @@ function spotlightAlpha(dx: number, dy: number): number {
 function paint(now: number): void {
   if (!ctx) return;
   ctx.clearRect(0, 0, width, height);
+
   for (let i = 0; i < dots.length; i++) {
     const d = dots[i];
-    const lit = litDots.get(i);
-    if (lit) {
-      const raw = wordPhase === 'clearing'
-        ? 1 - Math.min(1, (now - phaseStart) / CLEAR_MS)
-        : Math.min(1, Math.max(0, (now - phaseStart - lit.delay) / POP_MS));
-      const eased = raw * raw * (3 - 2 * raw);
-      if (eased > 0) {
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(${BUTTER_RGB}, ${eased})`;
-        ctx.arc(d.x, d.y, 1 + eased * 1.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      if (eased < 1) {
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(${DOT_RGB}, ${BASE_ALPHA * (1 - eased)})`;
-        ctx.arc(d.x, d.y, 1, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      continue;
-    }
     const alpha = reduced ? REDUCED_ALPHA : spotlightAlpha(d.x - curX, d.y - curY);
     ctx.beginPath();
     ctx.fillStyle = `rgba(${DOT_RGB}, ${alpha})`;
     ctx.arc(d.x, d.y, 1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  if (wordDots.length === 0) return;
+  const rMin = Math.max(0.6, wordRadius * 0.3);
+  for (let i = 0; i < wordDots.length; i++) {
+    const w = wordDots[i];
+    const raw = wordPhase === 'clearing'
+      ? 1 - Math.min(1, (now - phaseStart) / CLEAR_MS)
+      : Math.min(1, Math.max(0, (now - phaseStart - w.delay) / POP_MS));
+    const eased = raw * raw * (3 - 2 * raw);
+    if (eased <= 0) continue;
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(${BUTTER_RGB}, ${eased})`;
+    ctx.arc(w.x, w.y, rMin + eased * (wordRadius - rMin), 0, Math.PI * 2);
     ctx.fill();
   }
 }
@@ -125,7 +138,7 @@ function loop(now: number): void {
     r?.();
   } else if (wordPhase === 'clearing' && now - phaseStart >= CLEAR_MS) {
     wordPhase = 'idle';
-    litDots.clear();
+    wordDots = [];
     const r = resolveClear;
     resolveClear = null;
     r?.();
@@ -142,53 +155,49 @@ function ensureLoop(): void {
   if (rafId == null && !reduced) rafId = requestAnimationFrame(loop);
 }
 
-async function sampleWord(text: string): Promise<(x: number, y: number) => boolean> {
-  try { await document.fonts.ready; } catch { /* best-effort */ }
-  const off = document.createElement('canvas');
-  off.width = Math.max(1, width);
-  off.height = Math.max(1, height);
-  const octx = off.getContext('2d');
-  if (!octx) return () => false;
+/** Builds the lit-dot positions for `text` using the hand-drawn 5x7 FONT, sized to fill ~85% of the viewport width (bumped to 2x grid spacing when there's room to spare, shrunk continuously below 1x when the viewport is too narrow — e.g. mobile). */
+function buildWordDots(text: string): WordDot[] {
+  const letters = text.split('').map((c) => FONT[c.toLowerCase()]).filter((g): g is string[] => !!g);
+  if (letters.length === 0) return [];
 
-  const targetWidth = width * 0.7;
-  const probeSize = 100;
-  octx.font = `800 ${probeSize}px "Bricolage Grotesque", sans-serif`;
-  const measured = octx.measureText(text).width || 1;
-  const fontSize = Math.max(12, (targetWidth / measured) * probeSize);
-  octx.font = `800 ${fontSize}px "Bricolage Grotesque", sans-serif`;
-  octx.fillStyle = '#fff';
-  octx.textAlign = 'center';
-  octx.textBaseline = 'middle';
-  octx.fillText(text, width / 2, height / 2);
+  const cols = letters.length * FONT_W + (letters.length - 1) * LETTER_GAP;
+  const rows = FONT_H;
+  const targetWidth = width * 0.85;
 
-  const img = octx.getImageData(0, 0, off.width, off.height);
-  return (x: number, y: number) => {
-    const ix = Math.round(x);
-    const iy = Math.round(y);
-    if (ix < 0 || iy < 0 || ix >= off.width || iy >= off.height) return false;
-    return img.data[(iy * off.width + ix) * 4 + 3] > 128;
-  };
+  let spacing = GRID;
+  if ((cols - 1) * GRID * 2 <= targetWidth) spacing = GRID * 2; // room to spare -> bolder
+  if ((cols - 1) * spacing > targetWidth) spacing = targetWidth / (cols - 1); // too wide (e.g. mobile) -> shrink to fit
+  spacing = Math.max(3, spacing);
+  wordRadius = Math.max(1, spacing * 0.35);
+
+  const totalW = (cols - 1) * spacing;
+  const totalH = (rows - 1) * spacing;
+  const originX = (width - totalW) / 2;
+  const originY = (height - totalH) / 2;
+
+  const out: WordDot[] = [];
+  letters.forEach((glyph, li) => {
+    const colOffset = li * (FONT_W + LETTER_GAP);
+    for (let r = 0; r < FONT_H; r++) {
+      for (let c = 0; c < FONT_W; c++) {
+        if (glyph[r][c] !== '1') continue;
+        const col = colOffset + c;
+        out.push({ x: originX + col * spacing, y: originY + r * spacing, delay: 0 });
+      }
+    }
+  });
+
+  const maxCol = cols - 1;
+  for (const w of out) w.delay = maxCol > 0 ? ((w.x - originX) / totalW) * SWEEP_MS : 0;
+  return out;
 }
 
 export const dotfield = {
-  /** Lights up the dots that fall under `text`, sweeping left to right. */
+  /** Lights up dots forming `text` (hand-drawn bitmap font), sweeping left to right. */
   async drawWord(text: string): Promise<void> {
     if (!canvas || !ctx || reduced) return;
-    const has = await sampleWord(text);
-    const litIdx: number[] = [];
-    let minX = Infinity;
-    let maxX = -Infinity;
-    for (let i = 0; i < dots.length; i++) {
-      if (has(dots[i].x, dots[i].y)) {
-        litIdx.push(i);
-        minX = Math.min(minX, dots[i].x);
-        maxX = Math.max(maxX, dots[i].x);
-      }
-    }
-    litDots = new Map();
-    if (litIdx.length === 0) return;
-    const spanX = Math.max(1, maxX - minX);
-    for (const i of litIdx) litDots.set(i, { delay: ((dots[i].x - minX) / spanX) * SWEEP_MS });
+    wordDots = buildWordDots(text);
+    if (wordDots.length === 0) return;
 
     wordPhase = 'popping';
     phaseStart = performance.now();
@@ -199,7 +208,7 @@ export const dotfield = {
   /** Fades lit word-dots back into the normal grid. */
   async clearWord(): Promise<void> {
     if (!canvas || !ctx) return;
-    if (litDots.size === 0) { wordPhase = 'idle'; return; }
+    if (wordDots.length === 0) { wordPhase = 'idle'; return; }
     wordPhase = 'clearing';
     phaseStart = performance.now();
     ensureLoop();
