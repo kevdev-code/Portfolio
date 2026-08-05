@@ -173,7 +173,9 @@ function buildWordDots(text: string): WordDot[] {
   const totalW = (cols - 1) * spacing;
   const totalH = (rows - 1) * spacing;
   const originX = (width - totalW) / 2;
-  const originY = (height - totalH) / 2;
+  // vertical center at 42% (not 50%) of viewport height: leaves clear air
+  // between the word and the collapsed pieces piled up on the floor below
+  const originY = height * 0.42 - totalH / 2;
 
   const out: WordDot[] = [];
   letters.forEach((glyph, li) => {

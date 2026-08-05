@@ -102,13 +102,20 @@ const otherLang: Lang = lang === 'en' ? 'es' : 'en';
         .slice(0, MAX_PIECES)
         .map((x) => x.el);
     }
-    const vh = innerHeight;
     return els.map((el) => {
       const rect = el.getBoundingClientRect();
       const duration = 900 + Math.random() * 500; // 900-1400ms
       const delay = Math.random() * 350; // 0-350ms
-      const fallY = vh - rect.top + 200 + Math.random() * 300;
-      const rot = -140 + Math.random() * 280; // -140..140deg
+      // land on the viewport floor (pieces stay put and visible, don't fall
+      // offscreen): translate just enough so the bottom edge reaches the
+      // floor, minus 0-70px so pieces settle at slightly different heights
+      // (pile/overlap look). Clamped to 0 so pieces already at/past the
+      // floor never get nudged upward.
+      const fallY = Math.max(0, (innerHeight - rect.bottom) - Math.random() * 70);
+      // rotation scales down with size so nothing large ends up upside down
+      // (e.g. the marquee, which falls in the "large" bucket, lands flat)
+      const rotRange = rect.width > 560 ? 4 : rect.width > 280 ? 14 : 32;
+      const rot = (Math.random() * 2 - 1) * rotRange;
       // single implicit "from" keyframe: WAAPI fills 0% with the element's own
       // underlying (CSS) transform, so reverse() lands it back exactly where
       // it started, whatever that base transform was (e.g. .logo's rotate(-2deg))
