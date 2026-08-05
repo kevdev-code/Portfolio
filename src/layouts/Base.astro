@@ -8,8 +8,8 @@ import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
 import { useTranslations, localizePath, type Lang } from '../i18n/ui';
 
-interface Props { lang: Lang }
-const { lang } = Astro.props;
+interface Props { lang: Lang; title?: string }
+const { lang, title } = Astro.props;
 const t = useTranslations(lang);
 const site = Astro.site ?? new URL('http://localhost:4321');
 ---
@@ -18,12 +18,14 @@ const site = Astro.site ?? new URL('http://localhost:4321');
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{t('meta.title')}</title>
+    <title>{title ?? t('meta.title')}</title>
     <meta name="description" content={t('meta.description')} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" hreflang="en" href={new URL(localizePath('en'), site)} />
     <link rel="alternate" hreflang="es" href={new URL(localizePath('es'), site)} />
     <link rel="alternate" hreflang="x-default" href={new URL(localizePath('en'), site)} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, site)} />
+    <meta property="og:url" content={new URL(Astro.url.pathname, site)} />
     <meta property="og:title" content={t('meta.title')} />
     <meta property="og:description" content={t('meta.description')} />
     <meta property="og:type" content="website" />
