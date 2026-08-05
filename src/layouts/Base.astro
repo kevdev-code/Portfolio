@@ -34,12 +34,18 @@ const site = Astro.site ?? new URL('http://localhost:4321');
   </head>
   <body>
     <Intro />
-    <div class="dots" aria-hidden="true"></div>
+    <canvas id="dotfield" aria-hidden="true"></canvas>
     <div class="grain" aria-hidden="true"></div>
     <Header lang={lang} />
     <slot />
     <Footer lang={lang} />
+    <style>
+      #dotfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    </style>
     <script>
+      // el canvas del punteado hace su propio seguimiento del mouse y su rAF loop
+      import '../scripts/dotfield';
+
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const io = new IntersectionObserver(
         // bidireccional: al salir del viewport la seccion vuelve a su estado oculto
@@ -49,11 +55,6 @@ const site = Astro.site ?? new URL('http://localhost:4321');
       );
       document.querySelectorAll('.reveal, .reveal-stagger').forEach((el) => io.observe(el));
       if (!reduced) {
-        const root = document.documentElement;
-        addEventListener('mousemove', (e) => {
-          root.style.setProperty('--sx', e.clientX + 'px');
-          root.style.setProperty('--sy', e.clientY + 'px');
-        }, { passive: true });
         document.querySelectorAll('.magnetic').forEach((btn) => {
           const b = btn as HTMLElement;
           b.addEventListener('mousemove', (e) => {

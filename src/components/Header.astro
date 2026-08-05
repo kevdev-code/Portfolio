@@ -46,23 +46,11 @@ const otherLang: Lang = lang === 'en' ? 'es' : 'en';
   }
 </style>
 <style is:global>
-  /* party mode: elements below are created dynamically by Header's script,
-     so they never receive Astro's scoped data-attribute — this block must
-     stay global (see Task 6 lesson: scoped styles don't reach JS-created nodes). */
-  .party { position: fixed; inset: 0; z-index: 55; pointer-events: none; }
-  .party-pill {
-    position: fixed; top: 0; left: var(--x);
-    padding: 0.25rem 0.65rem; border-radius: 99px; font-weight: 700;
-    font-family: "Bricolage Grotesque", sans-serif; white-space: nowrap;
-    animation: party-fall var(--d) linear var(--delay, 0s) forwards;
-  }
-  .party-pill.pill-mint   { background: var(--mint); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.42 0.07 160); }
-  .party-pill.pill-butter { background: var(--butter); color: var(--bg); box-shadow: 3px 3px 0 oklch(0.45 0.06 95); }
-  .party-pill.pill-coral  { background: var(--coral); color: #fff; box-shadow: 3px 3px 0 oklch(0.35 0.1 45); }
-  @keyframes party-fall {
-    from { transform: translateY(-10vh) rotate(var(--r)); }
-    to   { transform: translateY(110vh) rotate(calc(var(--r) + 40deg)); }
-  }
+  /* egg v2 "derrumbe y renacer": .egg-msg is created dynamically by Header's
+     script (reduced-motion fallback only), so it never receives Astro's
+     scoped data-attribute — must stay global (Task 6 lesson: scoped styles
+     don't reach JS-created nodes). The collapse/rebirth itself animates real
+     page elements in place via WAAPI, so it needs no extra CSS at all. */
   .egg-msg {
     position: fixed; top: 50%; left: 50%;
     translate: -50% -50%; rotate: -2deg;
@@ -71,73 +59,148 @@ const otherLang: Lang = lang === 'en' ? 'es' : 'en';
     padding: 1rem 1.8rem; border-radius: 14px; text-align: center;
     box-shadow: 6px 6px 0 oklch(0.45 0.06 95);
     animation: sticker-in 0.4s var(--ease-pop) forwards;
+    z-index: 55;
   }
 </style>
 <script>
+  import { dotfield } from '../scripts/dotfield';
+
   // el toggle conserva la sección visible: anexa el hash actual al href
   const sw = document.querySelector('[data-lang-switch]') as HTMLAnchorElement | null;
   if (sw) sw.addEventListener('click', () => { if (location.hash) sw.href = sw.href.split('#')[0] + location.hash; });
 
-  // easter egg: 3 quick clicks on the logo -> party mode (sticker rain + message)
-  const PARTY_TEXTS = ['React', 'TypeScript', 'Astro', 'Flutter', 'Stripe', 'WhatsApp', 'PostgreSQL', 'kevindlv', '🌱', '📱', '🪺', '✦', '🎉'];
-  const PARTY_COLORS = ['mint', 'butter', 'coral'];
+  // easter egg v2 "derrumbe y renacer": 3 quick clicks on the logo collapses
+  // the whole page into a pile below the viewport, the dot field spells out
+  // "kevindlv", then every piece flies back to its exact spot in reverse.
   const CLICK_WINDOW_MS = 1200;
-  const PILL_COUNT = 28;
-  let clickTimes: number[] = [];
-  let partyRunning = false;
+  const MAX_PIECES = 80;
+  const HOLD_MS = 900;
+  const FALL_EASING = 'cubic-bezier(0.5, 0, 0.9, 0.4)'; // gravity ease-in
+  const PIECE_SELECTOR =
+    '.logo, nav > a, .avail, #headline .word, .squiggle, .hero .intro, .cta-row .btn, ' +
+    '.float, .sticker, .sec-head h2, .sec-head .meta, .step, .xp-row, .about-photo, ' +
+    '.about-grid p, .proj-info, .proj-shot, .mail, .socials a, .marquee, footer .foot span';
 
-  function spawnParty(message: string) {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const container = document.createElement('div');
-    container.className = 'party';
-    container.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(container);
+  const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-    let longest = 0;
-    if (!reduced) {
-      for (let i = 0; i < PILL_COUNT; i++) {
-        const duration = 1.8 + Math.random() * 1.4; // 1.8s - 3.2s
-        const delay = Math.random() * 0.4;
-        const pill = document.createElement('span');
-        pill.className = `party-pill pill-${PARTY_COLORS[i % PARTY_COLORS.length]}`;
-        pill.textContent = PARTY_TEXTS[Math.floor(Math.random() * PARTY_TEXTS.length)];
-        pill.style.setProperty('--x', `${Math.random() * 100}vw`);
-        pill.style.setProperty('--r', `${-12 + Math.random() * 24}deg`);
-        pill.style.setProperty('--d', `${duration}s`);
-        pill.style.setProperty('--delay', `${delay}s`);
-        pill.style.fontSize = `${0.8 + Math.random() * 0.4}rem`;
-        pill.addEventListener('animationend', () => pill.remove());
-        container.appendChild(pill);
-        longest = Math.max(longest, duration + delay);
-      }
+  function inViewport(el: Element): boolean {
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
+  }
+
+  interface Piece { el: HTMLElement; anim: Animation; end: number }
+
+  function collectPieces(): Piece[] {
+    let els = [...document.querySelectorAll<HTMLElement>(PIECE_SELECTOR)].filter(inViewport);
+    if (els.length > MAX_PIECES) {
+      els = els
+        .map((el) => {
+          const r = el.getBoundingClientRect();
+          return { el, area: r.width * r.height };
+        })
+        .sort((a, b) => b.area - a.area)
+        .slice(0, MAX_PIECES)
+        .map((x) => x.el);
     }
+    const vh = innerHeight;
+    return els.map((el) => {
+      const rect = el.getBoundingClientRect();
+      const duration = 900 + Math.random() * 500; // 900-1400ms
+      const delay = Math.random() * 350; // 0-350ms
+      const fallY = vh - rect.top + 200 + Math.random() * 300;
+      const rot = -140 + Math.random() * 280; // -140..140deg
+      // single implicit "from" keyframe: WAAPI fills 0% with the element's own
+      // underlying (CSS) transform, so reverse() lands it back exactly where
+      // it started, whatever that base transform was (e.g. .logo's rotate(-2deg))
+      const anim = el.animate(
+        [{ transform: `translateY(${fallY}px) rotate(${rot}deg)` }],
+        { duration, delay, easing: FALL_EASING, fill: 'forwards' },
+      );
+      return { el, anim, end: delay + duration };
+    });
+  }
 
+  let running = false;
+  let aborted = false;
+  let currentPieces: Piece[] = [];
+
+  function onEscape(e: KeyboardEvent) {
+    if (e.key !== 'Escape' || !running) return;
+    aborted = true;
+    window.removeEventListener('keydown', onEscape);
+    currentPieces.forEach((p) => p.anim.cancel());
+    void dotfield.clearWord();
+    document.documentElement.style.overflow = '';
+    currentPieces = [];
+    running = false;
+  }
+
+  async function runEgg() {
+    if (running) return;
+    running = true;
+    aborted = false;
+    document.documentElement.style.overflow = 'hidden';
+    window.addEventListener('keydown', onEscape);
+
+    const pieces = collectPieces();
+    currentPieces = pieces;
+    const collapseMs = pieces.reduce((m, p) => Math.max(m, p.end), 0);
+    await sleep(collapseMs);
+    if (aborted) return;
+
+    await dotfield.drawWord('kevindlv');
+    if (aborted) return;
+    await sleep(HOLD_MS);
+    if (aborted) return;
+
+    const clearing = dotfield.clearWord();
+    pieces.forEach((p) => p.anim.reverse());
+    await Promise.all([clearing, ...pieces.map((p) => p.anim.finished.catch(() => {}))]);
+    if (aborted) return;
+
+    pieces.forEach((p) => p.anim.cancel());
+    window.removeEventListener('keydown', onEscape);
+    document.documentElement.style.overflow = '';
+    currentPieces = [];
+    running = false;
+  }
+
+  function showReducedMsg(message: string) {
+    if (running) return;
+    running = true;
     const msgEl = document.createElement('div');
     msgEl.className = 'egg-msg';
+    msgEl.setAttribute('aria-hidden', 'true');
     msgEl.textContent = message;
-    container.appendChild(msgEl);
-    setTimeout(() => msgEl.remove(), 2800);
-
-    const cleanupMs = reduced ? 3000 : longest * 1000 + 400;
+    document.body.appendChild(msgEl);
     setTimeout(() => {
-      container.remove();
-      partyRunning = false;
-    }, cleanupMs);
+      msgEl.remove();
+      running = false;
+    }, 2500);
   }
 
   const logo = document.querySelector('.logo') as HTMLAnchorElement | null;
+
+  function triggerEgg() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      showReducedMsg(logo?.dataset.eggMsg || '');
+    } else {
+      void runEgg();
+    }
+  }
+
   if (logo) {
+    let clickTimes: number[] = [];
     logo.addEventListener('click', (e) => {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      if (partyRunning) return;
+      if (running) return;
       const now = Date.now();
       clickTimes = clickTimes.filter((t) => now - t < CLICK_WINDOW_MS);
       clickTimes.push(now);
       if (clickTimes.length >= 3) {
         clickTimes = [];
-        partyRunning = true;
-        spawnParty(logo.dataset.eggMsg || '');
+        triggerEgg();
       }
     });
   }
