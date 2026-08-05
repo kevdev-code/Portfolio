@@ -69,10 +69,9 @@ const otherLang: Lang = lang === 'en' ? 'es' : 'en';
   const sw = document.querySelector('[data-lang-switch]') as HTMLAnchorElement | null;
   if (sw) sw.addEventListener('click', () => { if (location.hash) sw.href = sw.href.split('#')[0] + location.hash; });
 
-  // easter egg v2 "derrumbe y renacer": 3 quick clicks on the logo collapses
+  // easter egg v2 "derrumbe y renacer": a double click on the logo collapses
   // the whole page into a pile below the viewport, the dot field spells out
   // "kevindlv", then every piece flies back to its exact spot in reverse.
-  const CLICK_WINDOW_MS = 1200;
   const MAX_PIECES = 80;
   const HOLD_MS = 900;
   const FALL_EASING = 'cubic-bezier(0.5, 0, 0.9, 0.4)'; // gravity ease-in
@@ -197,17 +196,21 @@ const otherLang: Lang = lang === 'en' ? 'es' : 'en';
   }
 
   if (logo) {
-    let clickTimes: number[] = [];
+    // single click scrolls to top; double click (second click within 350ms)
+    // fires the egg instead, with no pending scroll
+    let clickTimer: number | null = null;
     logo.addEventListener('click', (e) => {
       e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (running) return;
-      const now = Date.now();
-      clickTimes = clickTimes.filter((t) => now - t < CLICK_WINDOW_MS);
-      clickTimes.push(now);
-      if (clickTimes.length >= 3) {
-        clickTimes = [];
-        triggerEgg();
+      if (clickTimer !== null) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+        triggerEgg(); // double click
+      } else {
+        clickTimer = window.setTimeout(() => {
+          clickTimer = null;
+          window.scrollTo({ top: 0, behavior: 'smooth' }); // single click, fires 350ms later (imperceptible)
+        }, 350);
       }
     });
   }
